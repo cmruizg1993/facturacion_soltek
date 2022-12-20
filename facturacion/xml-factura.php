@@ -48,15 +48,18 @@ function generarXmlFactura(Factura $f){
     $infoFactura->addChild("importeTotal", "$f->importeTotal");
     $infoFactura->addChild("moneda", "$f->moneda");
     
-    /* PAGOS INFOFACTURA */
-    $pagos = $infoFactura->addChild("pagos");
-    foreach($f->pagos as $p){
-        $pago = $pagos->addChild("pago");
-        $pago->addChild("formaPago", "$p->formaPago");
-        $pago->addChild("total", "$p->total");
-        $pago->addChild("plazo", "$p->plazo");
-        $pago->addChild("unidadTiempo", "$p->unidadTiempo");
+    if(count($f->pagos)>0){
+        /* PAGOS INFOFACTURA */
+        $pagos = $infoFactura->addChild("pagos");
+        foreach($f->pagos as $p){
+            $pago = $pagos->addChild("pago");
+            $pago->addChild("formaPago", "$p->formaPago");
+            $pago->addChild("total", "$p->total");
+            $pago->addChild("plazo", "$p->plazo");
+            $pago->addChild("unidadTiempo", "$p->unidadTiempo");
+        }
     }
+    
     
     foreach($f->detalles as $d){
         $detalle = $detalles->addChild("detalle");

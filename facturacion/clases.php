@@ -54,7 +54,7 @@ class Factura{
         $claveAcceso = "$fecha$this->codDoc$this->ruc$this->ambiente$this->estab$this->ptoEmi$this->secuencial$digito8$this->tipoEmision";
         $suma = 0;
         $factor = 7;
-        foreach(explode('', $claveAcceso) as $item ){
+        foreach(str_split($claveAcceso) as $item ){
             $suma = $suma + (int)$item * $factor;
             $factor = $factor - 1;
             if ($factor == 1)$factor = 7;
@@ -104,6 +104,7 @@ class InfoAdicional{
 }
 class FacturacionApi{
     private $url = "http://marceloyamberla-001-site1.etempurl.com";
+    //private $url = "http://klever2022-001-site1.gtempurl.com";
     public function firmaXml($xml, Factura $factura, $idVenta){
         $data = [];
         $xml = str_replace("\n","", $xml);
@@ -116,8 +117,6 @@ class FacturacionApi{
         $ch = curl_init( "$this->url$endpoint" );
         # Setup request to send json via POST.
         $payload = json_encode( $data );
-        print_r($payload);
-        return;
         // Prepare new cURL resource
         $ch = curl_init($this->url.$endpoint);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -131,26 +130,18 @@ class FacturacionApi{
         );
         // Submit the POST request
         $result = curl_exec($ch);
-        $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        //echo $http_status;
-        $curl_errno= curl_errno($ch);
-        if ($http_status==503)
-            echo "HTTP Status == 503 <br/>";
-        //echo "Curl Errno returned $curl_errno <br/>";
-        //print_r($result);
-        curl_close($ch);
-        $respuesta = json_decode($result, true);
+        //$respuesta = json_decode($result, true);
         return $result;
     }
-    public function recepcion($idComprobante, $ruc){
-        $endpoint = "/api/facturacion/RecepcionPrueba?RucEmpresa=$ruc&IdComprobanteVenta=$idComprobante";
+    public function recepcion($claveAcceso, $ruc){
+        $endpoint = "/api/facturacion/RecepcionPrueba?RucEmpresa=$ruc&ClaveAcceso=$claveAcceso";
         $result = $this->getRequest($endpoint);
         $respuesta = json_decode($result);
         //print_r($result);
         return $respuesta;
     }
-    public function autorizacion($idComprobante, $ruc){
-        $endpoint = "/api/facturacion/AutorizacionPrueba?RucEmpresa=$ruc&IdComprobanteVenta=$idComprobante";
+    public function autorizacion($claveAcceso, $ruc){
+        $endpoint = "/api/facturacion/AutorizacionPrueba?RucEmpresa=$ruc&ClaveAcceso=$claveAcceso";
         $result = $this->getRequest($endpoint);
         $respuesta = json_decode($result);
         return $respuesta;
