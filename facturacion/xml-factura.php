@@ -6,7 +6,7 @@ function generarXmlFactura(Factura $f){
     $infoTributaria = $factura->addChild('infoTributaria');
     $infoFactura    = $factura->addChild('infoFactura');
     $detalles       = $factura->addChild('detalles');
-    $infoAdicional  = $factura->addChild('infoAdicional');
+    
     
     /* INFO TRIBUTARIA */
     $infoTributaria->addChild("ambiente", "$f->ambiente");
@@ -92,6 +92,7 @@ function generarXmlFactura(Factura $f){
         }
     }
     if(count($f->infoAdicional) > 0){
+        $infoAdicional  = $factura->addChild('infoAdicional');
         /* INFO ADICIONAL */
         foreach($f->infoAdicional as $info){
             $campoAdicional = $infoAdicional->addChild("campoAdicional", "$info->valor");

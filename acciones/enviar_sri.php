@@ -144,8 +144,7 @@ require('../facturacion/connexion.php');
         //$dato1->nombre = 'Sitio web de la empresa';
         //$dato1->valor = 'miempresa.com';
         //$factura->agregarInfo($dato1);
-        //comentar
-        //$factura->ruc = '0502529894001';
+        
         $xml = generarXmlFactura($factura);
         
         $myfile = fopen("../files/factura-$factura->secuencial.xml", "w");
