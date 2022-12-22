@@ -13,7 +13,10 @@ require('../facturacion/connexion.php');
         mysqli_select_db($conex,$database);
 
 
-        $sql = "SELECT * FROM fe_facturas f WHERE transaction_id = $id AND f.estado_sri = 'RECIBIDA' ORDER BY id DESC";
+        $sql = "SELECT f.*, e.ruc FROM fe_facturas f 
+                    INNER JOIN transactions t ON f.transaction_id = t.id
+                    INNER JOIN fe_empresa e ON t.business_id = e.business_id
+                    WHERE transaction_id = $id AND f.estado_sri = 'RECIBIDA' ORDER BY id DESC";
         $factura = null;
         $resultado=$conex->query($sql);
         while($fila = $resultado->fetch_array()){ 
@@ -22,25 +25,28 @@ require('../facturacion/connexion.php');
 
         $api = new FacturacionApi();
         // consumir endpoint de firma electrónica 
-        $ruc = '1717000556001';       
+        $ruc = $factura['ruc'];       
         // consumir endpoint de recepción        
         $idVenta = $id;//(int)$factura->secuencial;
         $respuesta = $api->autorizacion($factura['clave_acceso'], $ruc);
-        var_dump($respuesta);
+        //var_dump($respuesta);
         if(isset($respuesta->respuestaAutorizacion)){
-            $index = stripos($respuesta->respuestaAutorizacion, "/");
-            var_dump($index);
-            $estado = $index !== false ? trim(substr($respuesta->respuestaRecepcion, 0, $index)):$respuesta->respuestaRecepcion;
-            $mensaje = $index !== false ? substr($respuesta->respuestaRecepcion, $index+1):'';
+            $estado = $respuesta->respuestaAutorizacion;
+            $mensaje = "";
+            if($estado != "AUTORIZADO"){
+                $mensaje = $estado;
+                $estado = "NO AUTORIZADO";
+            }
+            
             $sql4 = "INSERT INTO fe_facturas (estado_sri, transaction_id, respuesta_sri) VALUES ('$estado', '$id', '$mensaje');";
-            var_dump($sql4);
             $r = $conex->query($sql4);
             if($r === false){   
                 $sql4 = "UPDATE fe_facturas SET estado_sri = '$estado', respuesta_sri =  '$mensaje' WHERE transaction_id = '$id';";
-                var_dump($sql4);
                 $r = $conex->query($sql4);
             }
+            
         }
+        header('Location: ' . $_SERVER['HTTP_REFERER']);
         //ob_clean();
         //print($xml);
         // consumir endpoint de autorización

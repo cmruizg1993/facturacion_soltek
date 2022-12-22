@@ -10,7 +10,7 @@
     mysqli_select_db($conex,$database);
     //invoice_no->secuencial
     $method = $_SERVER['REQUEST_METHOD'];
-    $empresa ;
+    $empresa = null;
     if($method == "POST"){
         $empresa = isset($_POST['empresa']) ? $_POST['empresa']: null;
     }
@@ -66,44 +66,10 @@
         </form>
         
         <div class="table-responsive" style="max-height: 550px;">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Acciones</th>
-                    <th>#</th>
-                    <th>Secuencial</th>
-                    <th>Fecha</th>
-                    <th>Total</th>
-                </tr>
-                </thead>
-                
-                <tbody>
-                    <?php 
-                    if($method == "POST" && $empresa){
-                        $counter = 1;
-                        
-                        $sql2 = "SELECT id, invoice_no, created_at, final_total FROM transactions LEFT JOIN  WHERE business_id = $empresa";
-                        $resultado2=$conex->query($sql2);
-                        while($fila2 = $resultado2->fetch_array()){
-                            $id = $fila2['id'];
-                            $secuencial = $fila2['invoice_no'];
-                            $fecha = ($fila2['created_at']);
-                            $total = $fila2['final_total'];
-                            echo "<tr>";
-                            echo "<td><a href='./acciones/enviar-sri.php?id=$id'>Enviar SRI</a></td>";
-                            echo "<td>$counter</td>";
-                            echo "<td>$secuencial</td>";
-                            echo "<td>$fecha</td>";
-                            echo "<td>$total</td>";
-                            echo "</tr>";
-                            $counter++;
-                        }
-                        $transactions = [];
-                    }
-                    
-                    ?>
-                </tbody>
-            </table>
+            <?php 
+                include './tabla_facturas.php';
+                imprimirTabla('RECHAZADAS', $conex, $empresa);
+            ?>
         </div>
     </div>
    

@@ -103,8 +103,8 @@ class InfoAdicional{
     public $valor;
 }
 class FacturacionApi{
-    private $url = "http://marceloyamberla-001-site1.etempurl.com";
-    //private $url = "http://klever2022-001-site1.gtempurl.com";
+    //private $url = "http://marceloyamberla-001-site1.etempurl.com";
+    private $url = "http://klever2022-001-site1.gtempurl.com";
     public function firmaXml($xml, Factura $factura, $idVenta){
         $data = [];
         $xml = str_replace("\n","", $xml);
@@ -142,25 +142,47 @@ class FacturacionApi{
     }
     public function autorizacion($claveAcceso, $ruc){
         $endpoint = "/api/facturacion/AutorizacionPrueba?RucEmpresa=$ruc&ClaveAcceso=$claveAcceso";
+        var_dump($endpoint);
         $result = $this->getRequest($endpoint);
         $respuesta = json_decode($result);
         return $respuesta;
     }
-    public function ride($idComprobante, $ruc){
-        $endpoint = "​/api​/facturacion​/GeneracionRide?RucEmpresa=$ruc&IdComprobanteVenta=$idComprobante";
+    public function ride($claveAcceso, $ruc){
+        $endpoint = "/api/facturacion/GeneracionRide?RucEmpresa=$ruc&ClaveAcceso=$claveAcceso";
         $result = $this->getRequest($endpoint);
         $respuesta = json_decode($result);
         return $respuesta;
     }
-    private function getRequest($endpoint){
-        $ch = curl_init("$this->url$endpoint");
+    public function getRequest($endpoint, $resource = null, $isFile = false, $file = null){
+        $ch = null;
+        if($resource){
+            $ch = curl_init("$resource");    
+        }else{
+            $ch = curl_init("$this->url$endpoint");
+        }
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        if($isFile){
+            //The path & filename to save to.
+            $saveTo = "../files/$file";
+            //Open file handler.
+            $fp = fopen($saveTo, 'w+');
+            //If $fp is FALSE, something went wrong.
+            if($fp === false){
+                throw new Exception('Could not open: ' . $saveTo);
+            }
+            //Pass our file handle to cURL.
+            curl_setopt($ch, CURLOPT_FILE, $fp);
+        }
         $result = curl_exec($ch);
+        if($isFile){
+            fclose($fp);
+        }
         if(curl_error($ch)) {
             //print_r($ch);
         }
         curl_close($ch);
+        var_dump($result);
         return $result;
     }
 }

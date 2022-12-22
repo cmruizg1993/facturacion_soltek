@@ -1,0 +1,13 @@
+{
+    "name": "cruiz/efacturacion",
+    "type": "project",
+    "authors": [
+        {
+            "name": "cmruizg777",
+            "email": "44457004+cmruizg777@users.noreply.github.com"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "^6.7"
+    }
+}

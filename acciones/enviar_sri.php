@@ -140,45 +140,39 @@ require('../facturacion/connexion.php');
         
         */
 
-        $dato1 = new InfoAdicional();
-        $dato1->nombre = 'Sitio web de la empresa';
-        $dato1->valor = 'miempresa.com';
-        $factura->agregarInfo($dato1);
+        //$dato1 = new InfoAdicional();
+        //$dato1->nombre = 'Sitio web de la empresa';
+        //$dato1->valor = 'miempresa.com';
+        //$factura->agregarInfo($dato1);
         //comentar
-        $factura->ruc = '0502529894001';
+        //$factura->ruc = '0502529894001';
         $xml = generarXmlFactura($factura);
         
-        $myfile = fopen("factura-$factura->secuencial.xml", "w");
-        fwrite($myfile, $xml);
-        
-
-        echo "Guardando ...";
+        $myfile = fopen("../files/factura-$factura->secuencial.xml", "w");
+        fwrite($myfile, $xml);    
         
         
         $api = new FacturacionApi();
         // consumir endpoint de firma electrónica 
-        $factura->ruc = '1717000556001';       
+        //$factura->ruc = '1717000556001';       
         $respuesta_firma = $api->firmaXml($xml, $factura, $id);        
-        var_dump($respuesta_firma);
         // consumir endpoint de recepción
         
         $idVenta = $id;//(int)$factura->secuencial;
         $respuesta = $api->recepcion($factura->claveAcceso, $factura->ruc);
-        var_dump($respuesta);
         if(isset($respuesta->respuestaRecepcion)){
             $index = stripos($respuesta->respuestaRecepcion, "/");
-            var_dump($index);
             $estado = $index !== false ? trim(substr($respuesta->respuestaRecepcion, 0, $index)):$respuesta->respuestaRecepcion;
             $mensaje = $index !== false ? substr($respuesta->respuestaRecepcion, $index+1):'';
             $sql4 = "INSERT INTO fe_facturas (estado_sri, transaction_id, respuesta_sri, clave_acceso) VALUES ('$estado', '$id', '$mensaje', '$factura->claveAcceso');";
-            var_dump($sql4);
             $r = $conex->query($sql4);
             if($r === false){   
                 $sql4 = "UPDATE fe_facturas SET estado_sri = '$estado', respuesta_sri =  '$mensaje', clave_acceso = '$factura->claveAcceso' WHERE transaction_id = '$id';";
-                var_dump($sql4);
                 $r = $conex->query($sql4);
             }
         }
+        header('Location: ' . $_SERVER['HTTP_REFERER']);
+        exit();
         //ob_clean();
         //print($xml);
         // consumir endpoint de autorización
