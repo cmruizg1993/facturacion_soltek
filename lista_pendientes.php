@@ -36,7 +36,7 @@
         <form method="POST">
         <div class="row justify-content-start mb-4">
             <div class="col-3">
-                <h5>Listado de facturas</h5>
+                <h5>Listado de facturas PENDIENTES</h5>
             </div>
             <div class="col-3">
                 <div class="row">
