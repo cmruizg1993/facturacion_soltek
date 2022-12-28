@@ -52,7 +52,7 @@ require('../settings/facturacion.php');
         
 
         
-        $factura->setSecuencial($transaction['id']);//verificar
+        $factura->setSecuencial($transaction['invoice_no']);//verificar
 
         $factura->fechaEmision = new DateTime($transaction['created_at']) ;
         $tipoDni = strlen($transaction["dni"]) == 13 ? '04':'05';
