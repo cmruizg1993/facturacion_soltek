@@ -2,7 +2,7 @@
 //Header('Content-type: text/xml');
 require('../facturacion/clases.php');
 require('../facturacion/connexion.php');
-
+require('../settings/facturacion.php');
     $id = isset($_GET["id"]) ? $_GET["id"]: null;
 
     if(!$id) die("No existe la factura !");
@@ -28,7 +28,7 @@ require('../facturacion/connexion.php');
         $ruc = $factura['ruc'];       
         // consumir endpoint de recepción        
         $idVenta = $id;//(int)$factura->secuencial;
-        $respuesta = $api->autorizacion($factura['clave_acceso'], $ruc);
+        $respuesta = $api->autorizacion($factura['clave_acceso'], $ruc, $pruebas);
         //var_dump($respuesta);
         if(isset($respuesta->respuestaAutorizacion)){
             $estado = $respuesta->respuestaAutorizacion;
@@ -47,12 +47,7 @@ require('../facturacion/connexion.php');
             
         }
         header('Location: ' . $_SERVER['HTTP_REFERER']);
-        //ob_clean();
-        //print($xml);
-        // consumir endpoint de autorización
-        //
-        // consumir endpoint de ride
-        //$api->ride($factura->secuencial, $factura->ruc);
+        exit();
 
     }catch(Exception $ex){
         var_dump($ex);

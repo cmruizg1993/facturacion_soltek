@@ -3,12 +3,14 @@
 require('../facturacion/clases.php');
 require('../facturacion/xml-factura.php');
 require('../facturacion/connexion.php');
+require('../settings/facturacion.php');
 
     $id = isset($_GET["id"]) ? $_GET["id"]: null;
 
     if(!$id) die("No existe la factura !");
 
     try{
+        
         /* RECIBIR DATOS DE SUS SISTEMA */
         $nroFactura = $id;
 
@@ -18,7 +20,7 @@ require('../facturacion/connexion.php');
         
         
         /* INICIO SECCION DE DATOS QUEMADOS */
-        $factura->ambiente = 1;
+        $factura->ambiente = $pruebas ? '1':'2';
         $factura->tipoEmision = 1;
         $factura->codDoc = '01';
 
@@ -158,7 +160,7 @@ require('../facturacion/connexion.php');
         // consumir endpoint de recepción
         
         $idVenta = $id;//(int)$factura->secuencial;
-        $respuesta = $api->recepcion($factura->claveAcceso, $factura->ruc);
+        $respuesta = $api->recepcion($factura->claveAcceso, $factura->ruc, $pruebas);
         if(isset($respuesta->respuestaRecepcion)){
             $index = stripos($respuesta->respuestaRecepcion, "/");
             $estado = $index !== false ? trim(substr($respuesta->respuestaRecepcion, 0, $index)):$respuesta->respuestaRecepcion;

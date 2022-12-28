@@ -133,15 +133,21 @@ class FacturacionApi{
         //$respuesta = json_decode($result, true);
         return $result;
     }
-    public function recepcion($claveAcceso, $ruc){
+    public function recepcion($claveAcceso, $ruc, $pruebas = true){
         $endpoint = "/api/facturacion/RecepcionPrueba?RucEmpresa=$ruc&ClaveAcceso=$claveAcceso";
+        if(!$pruebas){
+            $endpoint = "/api/facturacion/Recepcion?RucEmpresa=$ruc&ClaveAcceso=$claveAcceso";
+        }
         $result = $this->getRequest($endpoint);
         $respuesta = json_decode($result);
         //print_r($result);
         return $respuesta;
     }
-    public function autorizacion($claveAcceso, $ruc){
+    public function autorizacion($claveAcceso, $ruc, $pruebas = true){
         $endpoint = "/api/facturacion/AutorizacionPrueba?RucEmpresa=$ruc&ClaveAcceso=$claveAcceso";
+        if($pruebas){
+            $endpoint = "/api/facturacion/Autorizacion?RucEmpresa=$ruc&ClaveAcceso=$claveAcceso";
+        }
         var_dump($endpoint);
         $result = $this->getRequest($endpoint);
         $respuesta = json_decode($result);
