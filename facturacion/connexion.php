@@ -1,7 +1,7 @@
  <?php 
     $host = 'localhost';
-    $user = 'admin_klever';
-    $password = 'adminpos780++';
+    $user = 'root';
+    $password = '';
     $database = 'admin_pos2';
 
 

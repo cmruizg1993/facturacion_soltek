@@ -166,19 +166,23 @@ require('../settings/facturacion.php');
         
         
         $api = new FacturacionApi();
-        // consumir endpoint de firma electrónica 
-        //$factura->ruc = '1717000556001';       
-        $respuesta_firma = $api->firmaXml($xml, $factura, $id);        
-        // consumir endpoint de recepción
-        /*
-        $testJson = [];
-        $testJson["xml"] = $xml;
-        $testJson["claveAcceso"] = $factura->claveAcceso;
-        print(json_encode($testJson));
-        */
+        $jarFile = realpath('../FirmaElectronica/FirmaElectronica.jar');
+        $fileInput = realpath("./factura-$factura->secuencial.xml");
+        
+        // parametrizar archivo p12 y clave
+        $p12File = realpath('../FirmaElectronica/smartlinks.p12'); 
+        $p12Password = 'cristian1995firma'; 
+        
+        $fileOutput = $fileInput.".firmado";      
+        $respuesta_firma = $api->firmarXml($jarFile, $fileInput, $p12File, $p12Password, $fileOutput);
+
+        if($respuesta_firma != 0){
+
+        }
+
         var_dump($respuesta_firma);
         $idVenta = $id;//(int)$factura->secuencial;
-        $respuesta = $api->recepcion($factura->claveAcceso, $factura->ruc, $pruebas);
+        $respuesta = $api->recepcion($fileOutput, $pruebas);
         //var_dump($respuesta);
         if(isset($respuesta->respuestaRecepcion)){
             $index = stripos($respuesta->respuestaRecepcion, "/");
