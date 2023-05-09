@@ -23,7 +23,7 @@
 
     function verificarCredenciales($usuario, $clave ){
         $user = "soltek";
-        $password = "rAE7jUGHY2X6DoB0";
+        $password = "Adminpos780";
         $mensajes = [];
         if($user != $usuario || $password != $clave){
             $mensajes[] = "Usuario o contraseña invalidos";

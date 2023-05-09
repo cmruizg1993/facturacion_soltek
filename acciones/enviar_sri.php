@@ -63,9 +63,7 @@ require('../settings/facturacion.php');
         $factura->direccionComprador = $direccion;
 
 
-        $factura->totalDescuento = round($transaction['discount_amount'],2);
-        $factura->totalSinImpuestos = round($transaction['total_before_tax'],2);
-        $factura->importeTotal = round($transaction['final_total'],2);
+        
         
         $sql3= "SELECT t.quantity, t.unit_price_before_discount, t.unit_price, t.line_discount_amount, t.unit_price_inc_tax, t.item_tax, t.tax_id, 
                     p.id as cod, p.sku, p.name as producto,
@@ -79,6 +77,7 @@ require('../settings/facturacion.php');
         $subtotal0 = 0;
         $subtotal12 = 0;
         $iva12 = 0;
+        $descuento = 0;
         while($fila3 = $resultado3->fetch_array()){
             $detalle = new Detalle();
             $detalle->codigoPrincipal = $fila3['sku'];
@@ -88,18 +87,28 @@ require('../settings/facturacion.php');
 
             $detalle->precioUnitario = round($fila3['unit_price'],2);
             $detalle->precioTotalSinImpuesto = round($fila3['unit_price']*$fila3['quantity'],2);
-            $tieneIva = $fila3['amount'] == 12 ;
+            $tieneIva = (int)$fila3['amount'] > 0 ;
 
             if($tieneIva){
+                
+                $porcentaje = (int)$fila3['amount']/100;
+                $pvp = $fila3['unit_price_inc_tax'];
+                $precio = $pvp/(1 + $porcentaje);
+                $iva = $precio * $porcentaje ;
+                
+                
+                $detalle->precioUnitario = round($precio, 2);
+                $detalle->precioTotalSinImpuesto = round($precio*$fila3['quantity'], 2);
+                
                 $i12 = new Impuesto();
                 $i12->codigo = '2';
                 $i12->codigoPorcentaje = '2';
-                $i12->baseImponible = round($fila3['unit_price']*$fila3['quantity'],2);
-                $i12->valor = round($fila3['unit_price']*0.12*$fila3['quantity'] ,2);
+                $i12->baseImponible = round($precio*$fila3['quantity'],2);
+                $i12->valor = round($iva*$fila3['quantity'] ,2);
                 $i12->tarifa = '12';
                 $detalle->agregarImpuesto($i12);
-                $subtotal12 += $fila3['unit_price']*$fila3['quantity'];
-                $iva12 += $fila3['unit_price']*0.12*$fila3['quantity'] ;
+                $subtotal12 += $precio*$fila3['quantity'];
+                $iva12 += $iva*$fila3['quantity'] ;
             }else{
                 $i0 = new Impuesto();
                 $i0->codigo = '2';
@@ -111,10 +120,13 @@ require('../settings/facturacion.php');
                 $subtotal0 += $fila3['unit_price']*$fila3['quantity'];
             }
 
-            $detalle->descuento = round($fila3['line_discount_amount']*$fila3['quantity'],2);
+            $detalle->descuento = round(0, 2);
             $factura->agregarDetalle($detalle);
         }
         //var_dump($factura);
+        $factura->totalDescuento = round(0, 2);
+        $factura->totalSinImpuestos = round($subtotal0 + $subtotal12,2);
+        $factura->importeTotal = round($transaction['final_total'],2);
 
         if($subtotal12 > 0){
             $impuesto12 = new Impuesto();
@@ -158,19 +170,28 @@ require('../settings/facturacion.php');
         //$factura->ruc = '1717000556001';       
         $respuesta_firma = $api->firmaXml($xml, $factura, $id);        
         // consumir endpoint de recepción
-        
+        /*
+        $testJson = [];
+        $testJson["xml"] = $xml;
+        $testJson["claveAcceso"] = $factura->claveAcceso;
+        print(json_encode($testJson));
+        */
+        var_dump($respuesta_firma);
         $idVenta = $id;//(int)$factura->secuencial;
         $respuesta = $api->recepcion($factura->claveAcceso, $factura->ruc, $pruebas);
+        //var_dump($respuesta);
         if(isset($respuesta->respuestaRecepcion)){
             $index = stripos($respuesta->respuestaRecepcion, "/");
             $estado = $index !== false ? trim(substr($respuesta->respuestaRecepcion, 0, $index)):$respuesta->respuestaRecepcion;
             $mensaje = $index !== false ? substr($respuesta->respuestaRecepcion, $index+1):'';
             $sql4 = "INSERT INTO fe_facturas (estado_sri, transaction_id, respuesta_sri, clave_acceso) VALUES ('$estado', '$id', '$mensaje', '$factura->claveAcceso');";
+            
             $r = $conex->query($sql4);
             if($r === false){   
                 $sql4 = "UPDATE fe_facturas SET estado_sri = '$estado', respuesta_sri =  '$mensaje', clave_acceso = '$factura->claveAcceso' WHERE transaction_id = '$id';";
                 $r = $conex->query($sql4);
             }
+            echo $sql4;
         }
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit();

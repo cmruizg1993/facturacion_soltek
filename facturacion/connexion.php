@@ -1,6 +1,8 @@
  <?php 
     $host = 'localhost';
-    $user = 'root';
-    $password = '';
-    $database = 'pos';
+    $user = 'admin_klever';
+    $password = 'adminpos780++';
+    $database = 'admin_pos2';
+
+
  ?>

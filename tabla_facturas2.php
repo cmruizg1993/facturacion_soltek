@@ -1,7 +1,5 @@
 <?php 
 
-    header('Content-Type: text/html; charset=UTF-8');
-
     function imprimirTabla($tipoFacturas, $conex, $empresa){
         ?>
             <table class="table">
@@ -61,7 +59,7 @@
                             $total = $fila2['final_total'];
                             $estado = $fila2['estado_sri'];
                             $respuesta = $fila2['respuesta_sri'];
-                            $cliente = ($fila2['cliente']);                           
+                            $cliente = $fila2['cliente'];
                             $dni = $fila2['dni'];
                             $mail = $fila2['estado_mail'] == 1 ? "ENVIADO":"NO ENVIADO";
                             echo "<tr>";

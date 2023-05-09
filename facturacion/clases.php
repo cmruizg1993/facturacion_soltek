@@ -109,7 +109,7 @@ class FacturacionApi{
         $data = [];
         $xml = str_replace("\n","", $xml);
         $xml = str_replace("\"", "'", $xml);
-        $data["idComprobanteVenta"] = $idVenta;//(int) $factura->secuencial;
+        //$data["idComprobanteVenta"] = $idVenta;//(int) $factura->secuencial;
         $data["xmlGenerado"] = $xml;
         $data["rucEmpresa"] = $factura->ruc;
         $data["claveAcceso"] = $factura->claveAcceso;
@@ -145,16 +145,16 @@ class FacturacionApi{
     }
     public function autorizacion($claveAcceso, $ruc, $pruebas = true){
         $endpoint = "/api/facturacion/AutorizacionPrueba?RucEmpresa=$ruc&ClaveAcceso=$claveAcceso";
-        if($pruebas){
+        if(!$pruebas){
             $endpoint = "/api/facturacion/Autorizacion?RucEmpresa=$ruc&ClaveAcceso=$claveAcceso";
         }
-        var_dump($endpoint);
+        
         $result = $this->getRequest($endpoint);
         $respuesta = json_decode($result);
         return $respuesta;
     }
     public function ride($claveAcceso, $ruc){
-        $endpoint = "/api/facturacion/GeneracionRide?RucEmpresa=$ruc&ClaveAcceso=$claveAcceso";
+        $endpoint = "/api/facturacion/GeneracionRideFacturaSri?RucEmpresa=$ruc&ClaveAcceso=$claveAcceso";
         $result = $this->getRequest($endpoint);
         $respuesta = json_decode($result);
         return $respuesta;

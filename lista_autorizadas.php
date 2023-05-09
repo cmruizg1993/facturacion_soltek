@@ -10,9 +10,10 @@
     mysqli_select_db($conex,$database);
     //invoice_no->secuencial
     $method = $_SERVER['REQUEST_METHOD'];
-    $empresa = null;
+    $empresa = isset($_COOKIE['empresa']) ? $_COOKIE['empresa']:null;    
     if($method == "POST"){
         $empresa = isset($_POST['empresa']) ? $_POST['empresa']: null;
+        setcookie('empresa', $empresa);
     }
 ?>
 <!DOCTYPE html>
@@ -42,7 +43,7 @@
                 <div class="row">
                     <label for="empresa" class="col-sm-4 col-form-label">Empresa</label>
                     <div class="col-sm-8">
-                        <select name="empresa" id="" class="form-control">
+                        <select name="empresa" id="selectEmpresa" class="form-control">
                             <option value="0">Seleccione</option>
                             <?php 
                                 $sql1 = "SELECT `id`, `name` FROM business";
@@ -72,6 +73,14 @@
             ?>
         </div>
     </div>
-   
+    <script>
+        <?php
+            
+            if($empresa){
+                echo "document.getElementById('selectEmpresa').value = '$empresa';";
+            }
+        ?>
+        
+    </script>
 </body>
 </html>

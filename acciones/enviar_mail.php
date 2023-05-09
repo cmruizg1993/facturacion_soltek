@@ -37,7 +37,7 @@ try {
     $total = $factura["final_total"];
     $api = new FacturacionApi();
     $respuesta = $api->ride($clave, $ruc);
-    
+    var_dump($respuesta);
     if(isset($respuesta->rutaPDF)){
         $fileName = "$clave.pdf";
         $rutaPdf = $respuesta->rutaPDF;
