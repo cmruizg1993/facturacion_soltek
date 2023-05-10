@@ -21,9 +21,9 @@ require('../facturacion/connexion.php');
         $transaction = generarFactura($id, $factura, $conex);
 
         $xml = generarXmlFactura($factura);        
-        $fileInput = "../files/factura-$factura->secuencial.xml";        
+        $fileInput = "../files/factura-$factura->estab-$factura->ptoEmi-$factura->secuencial.xml";        
         writeUTF8File($fileInput, $xml);
-        $fileInput = realpath("../files/factura-$factura->secuencial.xml");
+        $fileInput = realpath($fileInput);
                 
         $api = new FacturacionApi();
         $jarFile = realpath('../FirmaElectronica/FirmaElectronica.jar');
