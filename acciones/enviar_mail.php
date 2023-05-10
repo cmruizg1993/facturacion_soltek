@@ -38,10 +38,12 @@ try {
     $clave =$factura["clave_acceso"];
     $ruc =$factura["ruc"];
     $total = $factura["final_total"];
+    /*
     $api = new FacturacionApi();
     $respuesta = $api->ride($clave, $ruc);
     var_dump($respuesta);
-    if(isset($respuesta->rutaPDF)){
+    */
+    if(isset($pdfName)){
         /*
         $fileName = "$clave.pdf";
         $rutaPdf = $respuesta->rutaPDF;
