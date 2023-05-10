@@ -43,6 +43,7 @@ try {
     $respuesta = $api->ride($clave, $ruc);
     var_dump($respuesta);
     */
+    var_dump($pdfName);
     if(isset($pdfName)){
         /*
         $fileName = "$clave.pdf";
