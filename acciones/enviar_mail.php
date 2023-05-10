@@ -4,7 +4,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception as MailerException;
 //Load Composer's autoloader
-require '../vendor/autoload.php';
+require('../ride.php'); 
 
 
 //Create an instance; passing `true` enables exceptions
@@ -18,7 +18,7 @@ try {
     //mysqli_select_db($conex,$database);
     $sendMail = true;
 
-    require('../ride.php');    
+      
 
 
     $sql = "SELECT f.*, e.ruc, e.razon, c.name as cliente, c.email, t.final_total FROM fe_facturas f 
