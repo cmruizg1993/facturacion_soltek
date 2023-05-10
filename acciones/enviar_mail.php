@@ -4,6 +4,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception as MailerException;
 //Load Composer's autoloader
+$sendMail = true;
 require('../ride.php'); 
 
 
@@ -16,7 +17,7 @@ try {
     if(!$id) die("No existe la factura !");
     //$conex = mysqli_connect($host,$user,$password);
     //mysqli_select_db($conex,$database);
-    $sendMail = true;
+    
 
       
 
