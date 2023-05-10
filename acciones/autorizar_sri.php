@@ -30,7 +30,7 @@ require('../settings/facturacion.php');
         // consumir endpoint de recepción        
         $idVenta = $id;//(int)$factura->secuencial;
         $respuesta = $api->autorizacion($factura['clave_acceso'], $pruebas);
-        //var_dump($respuesta);
+        print_r($respuesta);
         if(isset($respuesta->respuestaAutorizacion)){
             $estado = $respuesta->respuestaAutorizacion;
             $mensaje = "";
@@ -47,8 +47,8 @@ require('../settings/facturacion.php');
             }
             
         }
-        header('Location: ' . $_SERVER['HTTP_REFERER']);
-        exit();
+        //header('Location: ' . $_SERVER['HTTP_REFERER']);
+        //exit();
 
     }catch(Exception $ex){
         var_dump($ex);
