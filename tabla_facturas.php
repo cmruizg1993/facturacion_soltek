@@ -82,7 +82,7 @@
                             if($tipoFacturas == "AUTORIZADAS"){
                                 echo "<td>
                                     <a class='btn btn-sm btn-info' href='./acciones/enviar_mail.php?id=$id'>Enviar Mail</a>
-                                    <a class='btn btn-sm btn-danger' target='_blank' href='./acciones/ver_ride.php?id=$id'>Ride</a>
+                                    <a class='btn btn-sm btn-danger' target='_blank' href='./ride.php?id=$id'>Ride</a>
                                     </td>";
                             }
                             if($tipoFacturas == "RECHAZADAS"){
