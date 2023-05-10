@@ -18,11 +18,13 @@ function generarFactura($id, Factura &$factura, $conex){
         $factura->codDoc = '01';
 
         $sql = "SELECT t.id, invoice_no, t.created_at, final_total, total_before_tax, discount_amount, 
-                    ruc, nombre, razon, obligado, establecimiento, punto_emision, direccion, p12_file_path, p12_password, testing,
-                    c.name as cliente, c.contact_id as dni, c.address_line_1, c.address_line_2 
+                    ruc, nombre, razon, obligado, establecimiento, punto_emision, direccion, p12_file_path, p12_password, testing, logo, telefono, correo,
+                    c.name as cliente, c.contact_id as dni, c.address_line_1, c.address_line_2,
+                    f.clave_acceso
                     FROM transactions t 
                     INNER JOIN fe_empresa e ON t.business_id = e.business_id AND t.location_id = e.location_id
                     INNER JOIN contacts c ON c.id = t.contact_id 
+                    LEFT JOIN fe_facturas f ON f.transaction_id = t.id 
                     WHERE t.id = $id ;";
         $transaction = null;
         $resultado=$conex->query($sql);
@@ -43,7 +45,8 @@ function generarFactura($id, Factura &$factura, $conex){
         $factura->ruc =  $transaction['ruc'];
         $factura->obligadoContabilidad = strtoupper($transaction['obligado']) ;
         $factura->dirEstablecimiento = $transaction['direccion'];
-        
+        $factura->telefono = $transaction['telefono'];
+        $factura->correo = $transaction['correo'];
 
         
         $factura->setSecuencial($transaction['invoice_no']);//verificar

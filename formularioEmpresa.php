@@ -8,10 +8,16 @@
         <div class="col">
             <div class="form-group"><label for="">Razón Social</label><input type="text" name="razon" id="razon" class="form-control"></div>
         </div>
+        <div class="col">
+            <div class="form-group"><label for="">Nombre Comercial</label><input type="text" name="nombre" id="nombre" class="form-control"></div>
+        </div>
     </div>
     <div class="row">
         <div class="col">
-            <div class="form-group"><label for="">Nombre Comercial</label><input type="text" name="nombre" id="nombre" class="form-control"></div>
+            <div class="form-group"><label for="">Teléfono</label><input type="text" name="telefono" id="telefono" class="form-control"></div>
+        </div>
+        <div class="col">
+            <div class="form-group"><label for="">Correo</label><input type="text" name="correo" id="correo" class="form-control"></div>
         </div>
         <div class="col">
             <div class="form-group"><label for="">Obligado Contabilidad</label>
@@ -28,6 +34,9 @@
         </div>
         <div class="col">
             <div class="form-group"><label for="">Punto Emisión</label><input type="text" name="punto_emision" id="punto_emision" class="form-control"></div>
+        </div>
+        <div class="col">
+            <div class="form-group"><label for="">Logo</label><input type="file" name="logo" id="logo" class="form-control" accept="image/png"></div>
         </div>
     </div>
     <div class="row">

@@ -4,6 +4,7 @@ require 'vendor/autoload.php';
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use Dompdf\Dompdf;
+use Picqer\Barcode\BarcodeGeneratorPNG;
 
 require('facturacion/connexion.php');
 require('facturacion/clases.php');
@@ -31,20 +32,36 @@ try {
 
     $dompdf = new Dompdf();
 
+    $path = $transaction['logo'];
+
+    $type = pathinfo($path, PATHINFO_EXTENSION);
+    $data = file_get_contents($path);
+    $base64 =  base64_encode($data);
+    $factura->logo = $base64;
+    $factura->claveAcceso = $transaction['clave_acceso'];
+    
+    $generator = new BarcodeGeneratorPNG();
+    $codigoBarras = base64_encode($generator->getBarcode($factura->claveAcceso, $generator::TYPE_CODE_128));
+
+
     $html = $twig->render('ride.html', [
-        'factura' => $factura
+        'factura' => $factura,
+        'codigoBarras' => $codigoBarras
     ]);
     //echo $html;
     $dompdf->loadHtml($html);
 
     // (Optional) Setup the paper size and orientation
-    $dompdf->setPaper('A4', 'landscape');
+    $dompdf->setPaper('A4');
 
     // Render the HTML as PDF
     $dompdf->render();
 
-    // Output the generated PDF to Browser
-    $dompdf->stream();
+    $output = $dompdf->output();
+    $pdfName = "./files/ride/factura-$factura->estab-$factura->ptoEmi-$factura->secuencial.pdf";
+    file_put_contents("$pdfName", $output);
+
+    print_r($html);
 } catch (Exception $e) {
 }
 

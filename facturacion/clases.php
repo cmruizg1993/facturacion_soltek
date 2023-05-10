@@ -7,6 +7,10 @@ class Factura{
     const WS_RECEIV = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl';
     const WS_AUTH = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl';
 
+    public $logo ;
+    public $telefono ;
+    public $correo ;
+
     /* info tributaria */
     public $ambiente;
     public $tipoEmision;

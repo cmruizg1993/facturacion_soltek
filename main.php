@@ -61,6 +61,8 @@ if($dropLocation){
             $direccion = $fila["direccion"];
             $p12_password = $fila["p12_password"];
             $testing = $fila["testing"];
+            $telefono = $fila["telefono"];
+            $correo = $fila["correo"];
             $checked = $testing == 1 ? 'true': 'false';
             
         }
@@ -205,6 +207,8 @@ if($dropLocation){
         let inputPassword = document.getElementById("p12_password");
         let checkTesting = document.getElementById("testing");
         let inputFiltro = document.getElementById("filtro");
+        let inputTelefono = document.getElementById("telefono");
+        let inputCorreo = document.getElementById("correo");
         <?php
         
         if ($dropBusiness) {
@@ -226,6 +230,8 @@ if($dropLocation){
             echo "inputPuntoEmision.value = '$punto_emision';";
             echo "inputDireccion.value = '$direccion';";
             echo "inputPassword.value = '$p12_password';";
+            echo "inputTelefono.value = '$telefono';";
+            echo "inputCorreo.value = '$correo';";
             echo "checkTesting.checked = " . $checked . ";";
         }elseif ($ruta != 'empresa' && !$empresa){
             echo "inputFiltro.value = '$filtro';";
