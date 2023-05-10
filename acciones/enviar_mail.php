@@ -13,10 +13,13 @@ $mail = new PHPMailer(true);
 
 try {
     $id = isset($_GET["id"]) ? $_GET["id"]: null;
-
+    
     if(!$id) die("No existe la factura !");
-    $conex = mysqli_connect($host,$user,$password);
-    mysqli_select_db($conex,$database);
+    //$conex = mysqli_connect($host,$user,$password);
+    //mysqli_select_db($conex,$database);
+    $sendMail = true;
+
+    require('../ride.php');    
 
 
     $sql = "SELECT f.*, e.ruc, e.razon, c.name as cliente, c.email, t.final_total FROM fe_facturas f 
@@ -39,12 +42,14 @@ try {
     $respuesta = $api->ride($clave, $ruc);
     var_dump($respuesta);
     if(isset($respuesta->rutaPDF)){
+        /*
         $fileName = "$clave.pdf";
         $rutaPdf = $respuesta->rutaPDF;
         $respuestaDescarga = $api->getRequest('', $rutaPdf, true, $fileName);
         if($respuestaDescarga!==true){
             die("Error al descargar el archivo PDF");
         }
+        */
         //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
         $mail->isSMTP();                                            //Send using SMTP
         $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
@@ -63,7 +68,7 @@ try {
         //$mail->addBCC('bcc@example.com');
 
         //Attachments
-        $mail->addAttachment("../files/$fileName");         //Add attachments
+        $mail->addAttachment(".$pdfName");         //Add attachments
         //$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    //Optional name
 
         //Content
