@@ -1,3 +1,5 @@
 /vendor/
 /files/
 /acciones/*.xml
+/facturacion/connexion.php
+/FirmaElectronica/*.p12
