@@ -73,6 +73,7 @@ try {
         //Attachments
         $fileInput = "../files/factura-$factura->estab-$factura->ptoEmi-$factura->secuencial.xml";        
         $mail->addAttachment($fileInput);         //Add attachments
+        $mail->addAttachment(".$pdfName");         //Add attachments
         //$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    //Optional name
 
         //Content
@@ -83,7 +84,8 @@ try {
         Emisor: $razon<br>
         Tipo Documento: FACTURA<br>
         Clave de Acceso: $clave<br>
-        Valor: $total</br>
+        <p>Valor: $total</p></br></br>
+        <b>Para ver tu factura, por favor, haz click en el siguiente enlace. De preferencia en un navegador Chrome o Edge.</b></br>
         <a href='https://www.soltekpos.online/facturacion/ride.php?id=$id'>Ver Factura</a>";
         //$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
