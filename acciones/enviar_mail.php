@@ -1,4 +1,4 @@
-<?php
+b<?php
 Header('ContentType: ');
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -27,17 +27,17 @@ try {
                 INNER JOIN contacts c ON c.id = t.contact_id 
                 INNER JOIN fe_empresa e ON t.business_id = e.business_id
                 WHERE transaction_id = $id AND f.estado_sri = 'AUTORIZADO' ORDER BY id DESC";
-    $factura = null;
+    $f = null;
     $resultado=$conex->query($sql);
     while($fila = $resultado->fetch_array()){ 
-        $factura = $fila;
+        $f = $fila;
     }
-    $razon = $factura["razon"];
-    $nombre = $factura["cliente"];
-    $email = $factura["email"];
-    $clave =$factura["clave_acceso"];
-    $ruc =$factura["ruc"];
-    $total = $factura["final_total"];
+    $razon = $f["razon"];
+    $nombre = $f["cliente"];
+    $email = $f["email"];
+    $clave =$f["clave_acceso"];
+    $ruc =$f["ruc"];
+    $total = $f["final_total"];
     /*
     $api = new FacturacionApi();
     $respuesta = $api->ride($clave, $ruc);
@@ -71,18 +71,20 @@ try {
         //$mail->addBCC('bcc@example.com');
 
         //Attachments
-        $mail->addAttachment(".$pdfName");         //Add attachments
+        $fileInput = "../files/factura-$factura->estab-$factura->ptoEmi-$factura->secuencial.xml";        
+        $mail->addAttachment($fileInput);         //Add attachments
         //$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    //Optional name
 
         //Content
         $mail->isHTML(true);                            //Set email format to HTML
         $mail->Subject = utf8_decode('Facturación electrónica');
-        $mail->Body    = "Hola: $nombre<br>
+        $mail->Body    = "Estimado: $nombre<br>
         Acabas de recibir un Documento Electrónico<br>
         Emisor: $razon<br>
         Tipo Documento: FACTURA<br>
         Clave de Acceso: $clave<br>
-        Valor: $total";
+        Valor: $total</br>
+        <a href='https://www.soltekpos.online/facturacion/ride.php?id=$id'>Ver Factura</a>";
         //$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
         $mail->send();
