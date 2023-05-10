@@ -31,22 +31,32 @@ require('../settings/facturacion.php');
         $idVenta = $id;//(int)$factura->secuencial;
         $respuesta = $api->autorizacion($factura['clave_acceso'], $pruebas);
         print_r($respuesta);
-        if(isset($respuesta->respuestaAutorizacion)){
-            $estado = $respuesta->respuestaAutorizacion;
-            $mensaje = "";
-            if($estado != "AUTORIZADO"){
-                $mensaje = $estado;
-                $estado = "NO AUTORIZADO";
-            }
+
+        if(isset($respuesta->RespuestaAutorizacionComprobante)){
             
+            $autorizaciones = isset ($respuesta->RespuestaAutorizacionComprobante->autorizaciones) ? $respuesta->RespuestaAutorizacionComprobante->autorizaciones: null;
+            $autorizacion = null;
+            if($autorizaciones) $autorizacion = $autorizaciones->autorizacion;
+            $estado = '';
+            $mensaje = '';
+            if($autorizacion){
+                $estado = isset($autorizacion->estado) ? $autorizacion->estado: '';
+                $nroAutorizacion = isset($autorizacion->numeroAutorizacion) ? $autorizacion->numeroAutorizacion: '';
+                $fechaAutorizacion = isset($autorizacion->fechaAutorizacion) ? $autorizacion->fechaAutorizacion: '';
+                $ambiente = isset($autorizacion->ambiente) ? $autorizacion->ambiente: '';
+            }
+            $successState = 'AUTORIZADO';
+            $successAuth = $successState == $successState;
+            //if(!$successAuth) $estado = 'NO '.$successState;
+
             $sql4 = "INSERT INTO fe_facturas (estado_sri, transaction_id, respuesta_sri) VALUES ('$estado', '$id', '$mensaje');";
             $r = $conex->query($sql4);
             if($r === false){   
                 $sql4 = "UPDATE fe_facturas SET estado_sri = '$estado', respuesta_sri =  '$mensaje' WHERE transaction_id = '$id';";
                 $r = $conex->query($sql4);
             }
-            
         }
+    
         //header('Location: ' . $_SERVER['HTTP_REFERER']);
         //exit();
 
