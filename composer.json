@@ -3,7 +3,8 @@
     "require": {
         "picqer/php-barcode-generator": "^2.2",
         "dompdf/dompdf": "^2.0",
-        "twig/twig": "^3.6"
+        "twig/twig": "^3.6",
+        "phpmailer/phpmailer": "^6.8"
     },
     "autoload": {
         "psr-4": {
