@@ -1,3 +1,3 @@
 <?php 
-    $pruebas = false;
+    $pruebas = true;
 ?>

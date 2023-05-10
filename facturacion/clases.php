@@ -1,5 +1,16 @@
 <?php
+
 class Factura{
+
+    const WS_TEST_RECEIV = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl';
+    const WS_TEST_AUTH = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl';  # noqa
+    const WS_RECEIV = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl';
+    const WS_AUTH = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl';
+
+    public $logo ;
+    public $telefono ;
+    public $correo ;
+
     /* info tributaria */
     public $ambiente;
     public $tipoEmision;
@@ -66,7 +77,7 @@ class Factura{
         $claveAcceso=$claveAcceso.$digitoVerificador;
         $this->claveAcceso = $claveAcceso;        
         return $claveAcceso;
-    }   
+    }
 }
 class Detalle{
     public $codigoPrincipal;
@@ -103,6 +114,56 @@ class InfoAdicional{
     public $valor;
 }
 class FacturacionApi{
+    const WS_TEST_RECEIV = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl';
+    const WS_TEST_AUTH = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl';  # noqa
+    const WS_RECEIV = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl';
+    const WS_AUTH = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl';
+    
+    public function firmarXml($jarFile, $fileInput, $p12File, $p12Password, $fileOutput){
+        $output=null;
+        $retval=null;
+        $commands = ['java', '-jar', "\"$jarFile\"", "\"$fileInput\"", "\"$p12File\"", "\"$p12Password\"", "\"$fileOutput\""];
+        $strCommand = implode(" ", $commands);
+        print_r($strCommand);
+        exec($strCommand, $output, $retval);
+        /*
+        echo "Returned with status $retval and output:\n";
+        print_r($output);
+        */
+        return $output;
+    }
+
+    public function recepcion( $fileOutput, $testing = true){
+        $decodeContent = file_get_contents($fileOutput);
+
+        $decodeContent = iconv(mb_detect_encoding($decodeContent, mb_detect_order(), true), "UTF-8", $decodeContent);
+
+        $parametros = new \stdClass();
+        $parametros->xml = $decodeContent;
+        $url = $testing ? Factura::WS_TEST_RECEIV: Factura::WS_RECEIV;
+        try {
+            $client = new \SoapClient($url);
+            //var_dump(($parametros));
+            $result = $client->validarComprobante($parametros);
+            return $result;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
+    public function autorizacion($claveAcceso, $testing = true){
+        $url = $testing ? Factura::WS_TEST_AUTH: Factura::WS_AUTH;
+        try{
+            $client = new \SoapClient($url );
+            $parametros =  new \stdClass();
+            $parametros->claveAccesoComprobante = $claveAcceso;
+            $result = $client->autorizacionComprobante($parametros);
+            return $result;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
+    
+    /*
     //private $url = "http://marceloyamberla-001-site1.etempurl.com";
     private $url = "http://klever2022-001-site1.gtempurl.com";
     public function firmaXml($xml, Factura $factura, $idVenta){
@@ -153,6 +214,7 @@ class FacturacionApi{
         $respuesta = json_decode($result);
         return $respuesta;
     }
+    
     public function ride($claveAcceso, $ruc){
         $endpoint = "/api/facturacion/GeneracionRideFacturaSri?RucEmpresa=$ruc&ClaveAcceso=$claveAcceso";
         $result = $this->getRequest($endpoint);
@@ -191,5 +253,6 @@ class FacturacionApi{
         var_dump($result);
         return $result;
     }
+    */
 }
 ?>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title></title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      .contenedor {
+        padding: 10px;
+        width: 100%;
+      }
+      .w100 {
+        width: 100%;
+        min-height: 10px;
+        display: flex;
+      }
+      .w50 {
+        width: 45%;
+        display: inline-grid;
+      }
+      img {
+        margin: auto;
+        width: 120px;
+        max-width: 100%;
+      }
+      .round-bordered {
+        border: 1px solid #000000;
+        border-radius: 10px;
+      }
+      .line-bordered {
+        border: 1px solid #000000;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        border: none;
+      }
+      table td,
+      table th {
+        border: 1px solid #000000;
+        margin: 0;
+        padding: 0;
+      }
+      .centered {
+        text-align: center;
+      }
+      div {
+        margin-top: 5px;
+      }
+      .p10 {
+        padding: 2px;
+      }
+      .h100 {
+        height: 100%;
+      }
+      span {
+        margin-left: 10px;
+        display: inline-block;
+      }
+      .info-clave {
+        font-size: 14px;
+        font-weight: 800;
+      }
+      .info-clave div {
+        margin-bottom: 10px;
+      }
+      .clave {
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="contenedor">
+      <div class="w100">
+        <div class="w50 p10">
+          <div class="img centered">
+            <img src="data:image/png;base64,{{factura.logo}}" />
+          </div>
+          <div class="round-bordered p10 bottom">
+            <div class="centered">
+              <b>{{factura.razonSocial}}</b>
+            </div>
+            <div>
+              <span>Dirección Matriz: </span><span>{{factura.dirMatriz}}</span>
+            </div>
+            <div><span>Teléfono:</span><span>{{factura.telefono}}</span></div>
+            <div><span>Correo:</span><span>{{factura.correo}}</span></div>
+            <div>
+              <span>Obligado a llevar contabilidad:</span
+              ><span>{{factura.obligadoContabilidad}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="w50 p10">
+          <div class="round-bordered p10">
+            <div class="info-clave">
+              <div><span>RUC: </span><span>{{factura.ruc}}</span></div>
+              <div>
+                <span>FACTURA:</span
+                ><span>{{factura.serie}}-{{factura.secuencial}}</span>
+              </div>
+              <div>
+                <span>FECHA AUTORIZACION:</span
+                ><span>{{factura.fecha|date('d/m/Y h:i:s')}}</span>
+              </div>
+              <div><span>AMBIENTE:</span><span>PRODUCCION</span></div>
+              <div><span>EMISION:</span><span>NORMAL</span></div>
+              <div class="centered">
+                <b>NUMERO DE AUTORIZACION</b>
+              </div>
+            </div>
+            <div class="centered">
+              <span class="clave">{{factura.claveAcceso}}</span>
+            </div>
+            <div class="centered">
+              <b>CLAVE DE ACCESO</b>
+            </div>
+            <div class="img">
+              <img
+                style="width: 100%; height: 40px"
+                src="data:image/png;base64,{{codigoBarras}}"
+                alt="codigo de barras"
+              />
+            </div>
+            <div class="centered">
+              <span class="clave">{{factura.claveAcceso}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="line-bordered">
+        <div class="p10" style="display: block; width: 100%">
+          <span>Nombres:</span><span>{{factura.razonSocialComprador}}</span>
+        </div>
+        <div class="p10" style="display: block; width: 100%">
+          <span>Dirección:</span><span>{{factura.direccionComprador}}</span>
+        </div>
+        <div class="p10" style="display: block; width: 100%">
+          <span>CI/RUC:</span><span>{{factura.identificacionComprador}}</span>
+          <span style="margin-left: 20px">Fecha Emision:</span
+          ><span>{{factura.fecha | date('d/m/Y')}}</span>
+          <span style="margin-left: 20px">Vence:</span
+          ><span>{{factura.fecha | date('d/m/Y')}}</span>
+          <span style="margin-left: 20px">Teléfono:</span
+          ><span>{{factura.cliente.telefono}}</span>
+        </div>
+      </div>
+      <div class="table">
+        <table>
+          <thead>
+            <tr>
+              <th>Cod</th>
+              <th>Descripcion</th>
+              <th>Med</th>
+              <th>Cantidad</th>
+              <th>Precio Unitario</th>
+              <th>Descuento</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for d in factura.detalles %}
+            <tr>
+              <td>{{d.codigoPrincipal}}</td>
+              <td>{{d.descripcion}}</td>
+              <td>Unidad</td>
+              <td>{{d.cantidad}}</td>
+              <td>{{d.precioUnitario}}</td>
+              <td>{{d.descuento}}</td>
+              <td>{{d.precioTotalSinImpuesto}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td rowspan="11" colspan="4">
+                <div class="p10"></div>
+              </td>
+              <td colspan="2">Subtotal</td>
+              <td>{{ (factura.totalSinImpuestos)|number_format(2, '.', ',') }}</td>
+            </tr>
+            <tr>
+              <td colspan="2">Descuento</td>
+              <td>{{(factura.totalDescuento)|number_format(2, '.', ',')}}</td>
+            </tr>
+            <tr>
+                <td colspan="2">Subtotal Con Impuestos:</td>
+                <td>
+                    {% set subtotal12 = '0.00' %}
+                    {% for imp in factura.impuestos  %}
+                        {% if imp.codigo == 2 and imp.codigoPorcentaje == 2 %}
+                            {% set subtotal12 = imp.baseImponible %}                        
+                        {% endif %}
+                    {% endfor %}
+                    {{subtotal12}}
+                </td>
+            </tr>
+            <tr>
+              <td colspan="2">Subtotal Impuestos 0%:</td>
+              <td>
+                {% set subtotal0 = '0.00' %}
+                {% for imp in factura.impuestos  %}
+                    {% if imp.codigo == 2 and imp.codigoPorcentaje == 0 %}
+                        {% set subtotal0 = imp.baseImponible %}                        
+                    {% endif %}
+                {% endfor %}
+                {{subtotal0}}
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">IVA 12%:</td>
+              <td>
+                    {% set iva12 = '0.00' %}
+                    {% for imp in factura.impuestos  %}
+                        {% if imp.codigo == 2 and imp.codigoPorcentaje == 2 %}
+                            {% set iva12 = imp.valor %}                        
+                        {% endif %}
+                    {% endfor %}
+                    {{iva12}}
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">Propina:</td>
+              <td>{{ (factura.propina)|number_format(2, '.', ',')}}</td>
+            </tr>
+            <tr>
+              <td colspan="2"><b>VALOR TOTAL</b></td>
+              <td>{{ (factura.importeTotal)|number_format(2, '.', ',')}}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

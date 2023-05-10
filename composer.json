@@ -1,13 +1,19 @@
 {
-    "name": "cruiz/efacturacion",
-    "type": "project",
+    "name": "admin/facturacion_soltek",
+    "require": {
+        "picqer/php-barcode-generator": "^2.2",
+        "dompdf/dompdf": "^2.0",
+        "twig/twig": "^3.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Admin\\FacturacionSoltek\\": "src/"
+        }
+    },
     "authors": [
         {
             "name": "cmruizg777",
             "email": "44457004+cmruizg777@users.noreply.github.com"
         }
-    ],
-    "require": {
-        "phpmailer/phpmailer": "^6.7"
-    }
+    ]
 }

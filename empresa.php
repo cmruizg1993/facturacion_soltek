@@ -1,166 +1,188 @@
-<?php 
-    session_start();
-    if(empty($_SESSION["usuario"])){
-        session_destroy();
-        header("Location: ./public/index.php");
-        exit();
-    }
-    include './facturacion/connexion.php';
-    $conex = mysqli_connect($host,$user,$password);
-    mysqli_select_db($conex,$database);
-    //invoice_no->secuencial
-    $method = $_SERVER['REQUEST_METHOD'];
-    $empresa = null;
-    $dropBusiness = null;
-    $business = null;
-    if($method == "POST"){
-        $dropBusiness = isset($_POST['dropBusiness']) ? $_POST['dropBusiness']: null;
-        $business = isset($_POST['business']) ? $_POST['business']: null;
-    }
-    if($business){
-        
-        $empresa = isset($_POST['empresa']) ? $_POST['empresa']: null;
-        $ruc = isset($_POST['ruc']) ? $_POST['ruc']: '';
-        $razon = isset($_POST['razon']) ? $_POST['razon']: '';
-        $nombre = isset($_POST['nombre']) ? $_POST['nombre']: '';
-        $obligado = isset($_POST['obligado']) ? $_POST['obligado']: '';
-        $establecimiento = isset($_POST['establecimiento']) ? $_POST['establecimiento']: '';
-        $punto_emision = isset($_POST['punto_emision']) ? $_POST['punto_emision']: '';
-        $direccion = isset($_POST['direccion']) ? $_POST['direccion']: '';
-        if($empresa){
-            $sql = "UPDATE fe_empresa SET ruc = '$ruc', nombre='$nombre', razon='$razon', obligado='$obligado', establecimiento='$establecimiento', punto_emision='$punto_emision', direccion='$direccion' WHERE id='$empresa'";
-        }else{
-            $sql = "INSERT INTO fe_empresa (business_id, ruc, razon, nombre, obligado, establecimiento, punto_emision, direccion) VALUES('$business', '$ruc', '$razon', '$nombre', '$obligado', '$establecimiento', '$punto_emision', '$direccion')";
-        }
-        
-        $resultado = $conex->query($sql);
-        
-    }
-    if($dropBusiness){
-        //
-        $sql = "SELECT * FROM fe_empresa WHERE business_id = $dropBusiness;";
-        $resultado=$conex->query($sql);
-        if($resultado){
-            while($fila = $resultado->fetch_array()){
-                $empresa = $fila["id"];
-                $business = $fila["business_id"];
-                $ruc = $fila["ruc"];
-                $razon = $fila["razon"];
-                $nombre = $fila["nombre"];
-                $obligado = $fila["obligado"];
-                $establecimiento = $fila["establecimiento"];
-                $punto_emision = $fila["punto_emision"];
-                $direccion = $fila["direccion"];
-            }
-        }
-    }
+<?php
+session_start();
+if (empty($_SESSION["usuario"])) {
+    session_destroy();
+    header("Location: ./public/index.php");
+    exit();
+}
+include './facturacion/connexion.php';
+$conex = mysqli_connect($host, $user, $password);
+mysqli_select_db($conex, $database);
+//invoice_no->secuencial
+$method = $_SERVER['REQUEST_METHOD'];
+$checked = 'false';
+$empresa = null;
+$dropBusiness = 0;
+$dropLocation = 0;
+$filtro = '';
+$business = null;
+$ruta = isset($_GET['ruta']) ? $_GET['ruta']: '';
 
+$dropBusiness = isset($_REQUEST['dropBusiness']) ? $_REQUEST['dropBusiness'] : 0;
+$dropLocation = isset($_REQUEST['dropLocation']) ? $_REQUEST['dropLocation'] : 0;
+$filtro = isset($_REQUEST['filtro']) ? $_REQUEST['filtro'] : '';
+
+if ($method == "POST") {
+    $business = isset($_POST['business']) ? $_POST['business'] : null;
+    $location = isset($_POST['location']) ? $_POST['location'] : null;
+}
+
+include_once('./guardarEmpresa.php');
+
+$sucursales = [];
+if ($dropBusiness > 0) {
+    $sql = "SELECT * FROM `business_locations` WHERE business_id = $dropBusiness;";
+    $resultado = $conex->query($sql);
+    if($resultado) $sucursales = $resultado;
+}
+if($dropLocation){
+    $sql = "SELECT * FROM fe_empresa WHERE business_id = $dropBusiness AND location_id = $dropLocation;";
+    $resultado = $conex->query($sql);
+    if ($resultado) {
+        while ($fila = $resultado->fetch_array()) {
+            $empresa = $fila["id"];
+            $business = $fila["business_id"];
+            $ruc = $fila["ruc"];
+            $razon = $fila["razon"];
+            $nombre = $fila["nombre"];
+            $obligado = $fila["obligado"];
+            $establecimiento = $fila["establecimiento"];
+            $punto_emision = $fila["punto_emision"];
+            $direccion = $fila["direccion"];
+            $p12_password = $fila["p12_password"];
+            $testing = $fila["testing"];
+            $checked = $testing == 1 ? 'true': 'false';
+            
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-     <!-- JavaScript Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
     <title>Facturas</title>
 </head>
+
 <body>
     <div class="container-fluid">
-    <?php 
-            include './templates/header.php'
+        <?php
+        include './templates/header.php'
         ?>
     </div>
     <div class="container-fluid p-5">
-        <form method="POST">
-        <div class="row justify-content-start mb-4">
-            <div class="col-3">
-                <h5>Datos de la empresa</h5>
+        <form method="GET">
+            <div class="d-none">
+                <input type="hidden" name="ruta"
+                    <?php 
+                        echo 'value="'.$ruta.'"';
+                    ?>
+                >
             </div>
-            <div class="col-3">
-                <div class="row">
-                    <label for="dropBusiness" class="col-sm-4 col-form-label">Empresa</label>
-                    <div class="col-sm-8">
-                        <select name="dropBusiness" id="dropBusiness" class="form-control">
-                            <option value="0">Seleccione</option>
-                            <?php 
+            <div class="row justify-content-start mb-4">
+                
+                <h6 class="mb-3">Filtro</h6>
+                
+                <div class="col-3">
+                    <div class="row">
+                        <label for="dropBusiness" class="col-sm-4 col-form-label">Empresa</label>
+                        <div class="col-sm-8">
+                            <select name="dropBusiness" id="dropBusiness" class="form-control" 
+                                <?php echo "value='$dropBusiness'"; ?>
+                            >
+                                <option value="0">Seleccione</option>
+                                <?php
                                 $sql1 = "SELECT `id`, `name` FROM business";
-                                $resultado1=$conex->query($sql1);
-                                while($fila1 = $resultado1->fetch_array()){
-                                    $id1 = $fila1["id"]; 
+                                $resultado1 = $conex->query($sql1);
+                                while ($fila1 = $resultado1->fetch_array()) {
+                                    $id1 = $fila1["id"];
                                     $nombre1 = $fila1["name"];
                                     echo "<option value='$id1'>$nombre1</option>";
                                 }
-                            ?>
-                        </select>
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-3">
+                    <div class="row">
+                        <label for="dropLocation" class="col-sm-4 col-form-label">Sucursal</label>
+                        <div class="col-sm-8">
+                            <select name="dropLocation" id="dropLocation" class="form-control" 
+                            <?php echo "value='$dropLocation'"; ?>
+                            >
+                                <option value="0">Seleccione</option>
+                                <?php
+                                if($dropBusiness){
+                                    while ($sucursal = $sucursales->fetch_array()) {
+                                        $id2 = $sucursal["id"];
+                                        $nombre2 = $sucursal["name"];
+                                        echo "<option value='$id2'>$nombre2</option>";
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </div>
                     </div>
                 </div>
-                
+                <?php 
+                    if($ruta != 'empresa'){
+                        ?>
+                        <div class="col-3">
+                    <div class="row">
+                        <label for="filtro" class="col-sm-4 col-form-label">Filtro</label>
+                        <div class="col-sm-8">
+                            <input name="filtro" id="filtro" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                        <?php
+                    }
+                ?>
+                <div class="col-3">
+
+                    <button class="btn btn-primary" id="btnBuscar">Buscar</button>
+                </div>
             </div>
-            <div class="col-3">
-                
-                <button class="btn btn-primary">Buscar</button>
-            </div>
-        </div>
         </form>
         <div class="container">
-            <form action="" method="POST">
-            <div class="row">
-                <div class="col">
-                    <div class="form-group"><label for="">Ruc</label><input type="text" name="ruc" id="ruc" class="form-control"></div>
-                </div>
-                <div class="col">
-                    <div class="form-group"><label for="">Razón Social</label><input type="text" name="razon" id="razon" class="form-control"></div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <div class="form-group"><label for="">Nombre Comercial</label><input type="text" name="nombre" id="nombre" class="form-control"></div>
-                </div>
-                <div class="col">
-                    <div class="form-group"><label for="">Obligado Contabilidad</label>
-                    <select name="obligado" id="obligado" class="form-control">
-                        <option value="NO">NO</option>
-                        <option value="SI">SI</option>
-                    </select></div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <div class="form-group"><label for="">Establecimiento</label><input type="text" name="establecimiento" id="establecimiento" class="form-control"></div>
-                </div>
-                <div class="col">
-                    <div class="form-group"><label for="">Punto Emisión</label><input type="text" name="punto_emision" id="punto_emision" class="form-control"></div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <div class="form-group"><label for="">Dirección</label><input type="text" name="direccion" id="direccion" class="form-control"></div>
-                </div>
-
-            </div>
-            <div class="row">
-                <input type="hidden" name="business" id="business">
-                <input type="hidden" name="empresa" id="empresa">
-            </div>
-            <div class="row justify-content-end mt-3">
-                <div class="col-6">
-                    <button class="btn btn-primary" id="btnGuardar">Guardar</button>
-                </div>
-            </div>
-            </form>
+            <?php             
+                if($ruta == 'empresa'){
+                    include './formularioEmpresa.php';
+                }elseif($ruta){
+                    echo "<h4 class='text-primary'>FACTURAS $ruta</h4>";
+                    echo '<div class="table-responsive" style="max-height: 550px;">';
+                    include './tabla_facturas.php';
+                    imprimirTabla($ruta, $conex, $dropBusiness, $dropLocation, $filtro);
+                    echo '</div>';;
+                }                
+            ?>
         </div>
     </div>
-     <script>
+    <script>
         let dropBusiness = document.getElementById("dropBusiness");
-        dropBusiness.onchange = function(event){
+        let dropLocation = document.getElementById("dropLocation");
+
+        dropBusiness.onchange = function(event) {
             let value = event.target.value;
-            document.getElementById("btnGuardar").disabled = true ;
+            dropLocation.value = null;
+            document.getElementById("btnBuscar").click();            
+        }
+        
+        dropLocation.onchange = function(event) {
+            let value = event.target.value;
+            document.getElementById("btnBuscar").click();            
         }
         let inputEmpresa = document.getElementById("empresa");
         let inputBusiness = document.getElementById("business");
+        let inputBusinessLocation = document.getElementById("location");
 
         /* */
         let inputRuc = document.getElementById("ruc");
@@ -170,24 +192,43 @@
         let inputEstablecimiento = document.getElementById("establecimiento");
         let inputPuntoEmision = document.getElementById("punto_emision");
         let inputDireccion = document.getElementById("direccion");
+        let inputPassword = document.getElementById("p12_password");
+        let checkTesting = document.getElementById("testing");
+        let inputFiltro = document.getElementById("filtro");
         <?php
-            if($dropBusiness){
-                echo "dropBusiness.value = $dropBusiness;";
-                echo "inputBusiness.value = $dropBusiness;";
-            }
-            if($empresa){
-                echo "inputEmpresa.value = '$empresa';";
-                echo "inputRuc.value = '$ruc';";
-                echo "inputRazon.value = '$razon';";
-                echo "inputNombre.value = '$nombre';";
-                echo "inputObligado.value = '$obligado';";
-                echo "inputEstablecimiento.value = '$establecimiento';";
-                echo "inputPuntoEmision.value = '$punto_emision';";
-                echo "inputDireccion.value = '$direccion';";
-                
-            } 
+        
+        if ($dropBusiness) {
+            echo "dropBusiness.value = $dropBusiness;\n";
+            echo "if(inputBusiness)inputBusiness.value = $dropBusiness;\n";
+        }
+        if ($dropLocation) {
+            echo "dropLocation.value = $dropLocation;\n";
+            echo "if(inputBusinessLocation)inputBusinessLocation.value = $dropLocation;\n";
+        }
+        if ($ruta == 'empresa') { 
+            
+            echo "inputEmpresa.value = '$empresa';";
+            echo "inputRuc.value = '$ruc';";
+            echo "inputRazon.value = '$razon';";
+            echo "inputNombre.value = '$nombre';";
+            echo "inputObligado.value = '$obligado';";
+            echo "inputEstablecimiento.value = '$establecimiento';";
+            echo "inputPuntoEmision.value = '$punto_emision';";
+            echo "inputDireccion.value = '$direccion';";
+            echo "inputPassword.value = '$p12_password';";
+            echo "checkTesting.checked = " . $checked . ";";
+        }else{
+            echo "inputFiltro.value = '$filtro';";
+        }
         ?>
-        document.getElementById("btnGuardar").disabled = inputBusiness.value == 0 || inputBusiness.value == null ;
-     </script>                           
+        if(inputBusiness != null){
+            document.getElementById("btnGuardar").disabled = inputBusiness.value == 0 || inputBusiness.value == null;
+        }
+        
+    </script>
+    <script>
+
+    </script>
 </body>
+
 </html>

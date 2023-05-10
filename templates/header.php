@@ -8,22 +8,34 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" href="./empresa.php">Empresa</a>
+          <a class="nav-link" href="./main.php?ruta=empresa">Empresa</a>
         </li>
-        <li class="nav-item dropdown">
+        <li class="nav-item">
+          <a class="nav-link" href="./main.php?ruta=PENDIENTES">Pendientes</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="./main.php?ruta=ENVIADAS">Enviadas</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="./main.php?ruta=RECHAZADAS">Devueltas</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="./main.php?ruta=AUTORIZADAS">Autorizadas</a>
+        </li>
+        <!--li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Facturas
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="./lista_pendientes.php">Pendientes</a></li>
+            <li><a class="dropdown-item" href="./main.php?ruta=PENDIENTES">Pendientes</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="./lista_enviadas.php">Enviadas</a></li>
+            <li><a class="dropdown-item" href="./main.php?ruta=ENVIADAS">Enviadas</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="./lista_devueltas.php">Devueltas</a></li>
+            <li><a class="dropdown-item" href="./main.php?ruta=RECHAZADAS">Devueltas</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="./lista_autorizadas.php">Autorizadas</a></li>
+            <li><a class="dropdown-item" href="./main.php?ruta=AUTORIZADAS">Autorizadas</a></li>
           </ul>
-        </li>
+        </li-->
       </ul>
       <form class="d-flex" role="search" method="POST" action="logout.php">
         <button class="btn btn-outline-danger" type="submit">Cerrar Sesión</button>

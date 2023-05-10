@@ -13,9 +13,9 @@ require('../settings/facturacion.php');
         mysqli_select_db($conex,$database);
 
 
-        $sql = "SELECT f.*, e.ruc FROM fe_facturas f 
+        $sql = "SELECT f.*, e.ruc, testing FROM fe_facturas f 
                     INNER JOIN transactions t ON f.transaction_id = t.id
-                    INNER JOIN fe_empresa e ON t.business_id = e.business_id
+                    INNER JOIN fe_empresa e ON t.business_id = e.business_id AND t.location_id = e.location_id
                     WHERE transaction_id = $id AND f.estado_sri = 'RECIBIDA' ORDER BY id DESC";
         $factura = null;
         $resultado=$conex->query($sql);
@@ -25,10 +25,11 @@ require('../settings/facturacion.php');
 
         $api = new FacturacionApi();
         // consumir endpoint de firma electrónica 
-        $ruc = $factura['ruc'];       
+        $ruc = $factura['ruc'];
+        $pruebas = $factura['testing'] == 1 ;    
         // consumir endpoint de recepción        
         $idVenta = $id;//(int)$factura->secuencial;
-        $respuesta = $api->autorizacion($factura['clave_acceso'], $ruc, $pruebas);
+        $respuesta = $api->autorizacion($factura['clave_acceso'], $pruebas);
         //var_dump($respuesta);
         if(isset($respuesta->respuestaAutorizacion)){
             $estado = $respuesta->respuestaAutorizacion;
