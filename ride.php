@@ -60,6 +60,7 @@ try {
     $output = $dompdf->output();
     $pdfName = "./files/ride/factura-$factura->estab-$factura->ptoEmi-$factura->secuencial.pdf";
     file_put_contents("$pdfName", $output);
+    var_dump($sendMail);
     if(!isset($sendMail)){
         print_r($html);
         //header('Location: ' . $pdfName);
@@ -68,6 +69,7 @@ try {
     
     
 } catch (Exception $e) {
+    print_r($e);
 }
 
 
