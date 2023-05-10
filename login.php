@@ -10,13 +10,13 @@
         if(count($mensajes) == 0){
             session_start();
             $_SESSION["usuario"] = $usuario;
-            header("Location: ../lista_pendientes.php");
+            header("Location: ../main.php?ruta=PENDIENTES");
             die();
         }
     }else{
         session_start();
         if(isset($_SESSION["usuario"])){
-            header("Location: ../lista_pendientes.php");
+            header("Location: ../main.php?ruta=PENDIENTES");
             exit();
         }
     }

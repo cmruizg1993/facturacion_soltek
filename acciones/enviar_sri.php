@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: text/html; charset=UTF-8');
 //Header('Content-type: text/xml');
 require('../facturacion/clases.php');
 require('../facturacion/xml-factura.php');
@@ -25,10 +26,10 @@ require('../settings/facturacion.php');
         $factura->codDoc = '01';
 
         $sql = "SELECT t.id, invoice_no, t.created_at, final_total, total_before_tax, discount_amount, 
-                    ruc, nombre, razon, obligado, establecimiento, punto_emision, direccion, 
+                    ruc, nombre, razon, obligado, establecimiento, punto_emision, direccion, p12_file_path, p12_password, testing,
                     c.name as cliente, c.contact_id as dni, c.address_line_1, c.address_line_2 
                     FROM transactions t 
-                    INNER JOIN fe_empresa e ON t.business_id = e.business_id 
+                    INNER JOIN fe_empresa e ON t.business_id = e.business_id AND t.location_id = e.location_id
                     INNER JOIN contacts c ON c.id = t.contact_id 
                     WHERE t.id = $id ;";
         $transaction = null;
@@ -144,6 +145,7 @@ require('../settings/facturacion.php');
             $impuesto0->valor = 0;
             $factura->agregarImpuesto($impuesto0);
         }
+        
         /*
         $pago = new FormaPago();
         $pago->formaPago = $fila2['id_fpago'];
@@ -159,35 +161,41 @@ require('../settings/facturacion.php');
         //$dato1->valor = 'miempresa.com';
         //$factura->agregarInfo($dato1);
         
-        $xml = generarXmlFactura($factura);
-        
-        $myfile = fopen("../files/factura-$factura->secuencial.xml", "w");
-        fwrite($myfile, $xml);    
-        
-        
+        $xml = generarXmlFactura($factura);        
+        $fileInput = "../files/factura-$factura->secuencial.xml";        
+        writeUTF8File($fileInput, $xml);
+        $fileInput = realpath("../files/factura-$factura->secuencial.xml");
+                
         $api = new FacturacionApi();
         $jarFile = realpath('../FirmaElectronica/FirmaElectronica.jar');
-        $fileInput = realpath("./factura-$factura->secuencial.xml");
         
         // parametrizar archivo p12 y clave
-        $p12File = realpath('../FirmaElectronica/smartlinks.p12'); 
-        $p12Password = 'cristian1995firma'; 
+        $p12File = realpath('../'. $transaction['p12_file_path']); 
+        $p12Password = $transaction['p12_password'];  
+        $pruebas = $transaction['testing'] == 1 ;         
         
-        $fileOutput = $fileInput.".firmado";      
+        $fileOutput = $fileInput.".firmado";              
         $respuesta_firma = $api->firmarXml($jarFile, $fileInput, $p12File, $p12Password, $fileOutput);
-
-        if($respuesta_firma != 0){
-
+        print_r($respuesta_firma);
+        $successMessage = 'Documento Firmado Correctamente';
+        if($respuesta_firma[0] != $successMessage){            
+            die("Error al firmar documento");
         }
-
-        var_dump($respuesta_firma);
+        
         $idVenta = $id;//(int)$factura->secuencial;
+        
         $respuesta = $api->recepcion($fileOutput, $pruebas);
-        //var_dump($respuesta);
-        if(isset($respuesta->respuestaRecepcion)){
-            $index = stripos($respuesta->respuestaRecepcion, "/");
-            $estado = $index !== false ? trim(substr($respuesta->respuestaRecepcion, 0, $index)):$respuesta->respuestaRecepcion;
-            $mensaje = $index !== false ? substr($respuesta->respuestaRecepcion, $index+1):'';
+        print_r(json_encode($respuesta));
+        
+        if(isset($respuesta->RespuestaRecepcionComprobante)){
+            
+            $estado = $respuesta->RespuestaRecepcionComprobante->estado;            
+            $successState = 'RECIBIDA';
+            $successReceiv = $successState == $successState;
+
+            $comprobante = $respuesta->RespuestaRecepcionComprobante->comprobantes->comprobante;
+            $mensaje = json_encode($comprobante->mensajes);
+            
             $sql4 = "INSERT INTO fe_facturas (estado_sri, transaction_id, respuesta_sri, clave_acceso) VALUES ('$estado', '$id', '$mensaje', '$factura->claveAcceso');";
             
             $r = $conex->query($sql4);
@@ -195,19 +203,24 @@ require('../settings/facturacion.php');
                 $sql4 = "UPDATE fe_facturas SET estado_sri = '$estado', respuesta_sri =  '$mensaje', clave_acceso = '$factura->claveAcceso' WHERE transaction_id = '$id';";
                 $r = $conex->query($sql4);
             }
-            echo $sql4;
+            echo $sql4;            
         }
-        header('Location: ' . $_SERVER['HTTP_REFERER']);
-        exit();
-        //ob_clean();
-        //print($xml);
-        // consumir endpoint de autorización
-        //$api->autorizacion($idVenta, $factura->ruc);
-        // consumir endpoint de ride
-        //$api->ride($factura->secuencial, $factura->ruc);
+        if($successReceiv){
+            echo "RECIBIDA";
+        }else{
+            echo "ERROR";
+        }
+        //header('Location: ' . $_SERVER['HTTP_REFERER']);
+        //exit();
 
     }catch(Exception $ex){
         var_dump($ex);
     }
-
+    function writeUTF8File($filename, $content) {
+        $f = fopen($filename, "w");
+        # Now UTF-8 - Add byte order mark
+        fwrite($f, pack("CCC", 0xef, 0xbb, 0xbf));
+        fwrite($f, $content);
+        fclose($f);
+    }
 ?>

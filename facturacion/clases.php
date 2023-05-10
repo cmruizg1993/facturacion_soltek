@@ -1,4 +1,5 @@
 <?php
+
 class Factura{
 
     const WS_TEST_RECEIV = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl';
@@ -117,23 +118,28 @@ class FacturacionApi{
     public function firmarXml($jarFile, $fileInput, $p12File, $p12Password, $fileOutput){
         $output=null;
         $retval=null;
-        $commands = ['java', '-jar', $jarFile, $fileInput, $p12File, $p12Password, $fileOutput];
+        $commands = ['java', '-jar', "\"$jarFile\"", "\"$fileInput\"", "\"$p12File\"", "\"$p12Password\"", "\"$fileOutput\""];
         $strCommand = implode(" ", $commands);
-        var_dump($strCommand);
+        print_r($strCommand);
         exec($strCommand, $output, $retval);
-        
+        /*
         echo "Returned with status $retval and output:\n";
         print_r($output);
-        return $retval;
+        */
+        return $output;
     }
 
     public function recepcion( $fileOutput, $testing = true){
         $decodeContent = file_get_contents($fileOutput);
+
+        $decodeContent = iconv(mb_detect_encoding($decodeContent, mb_detect_order(), true), "UTF-8", $decodeContent);
+
         $parametros = new \stdClass();
         $parametros->xml = $decodeContent;
         $url = $testing ? Factura::WS_TEST_RECEIV: Factura::WS_RECEIV;
         try {
             $client = new \SoapClient($url);
+            //var_dump(($parametros));
             $result = $client->validarComprobante($parametros);
             return $result;
         }catch (\Exception $e){
