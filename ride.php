@@ -60,8 +60,8 @@ try {
     $output = $dompdf->output();
     $pdfName = "./files/ride/factura-$factura->estab-$factura->ptoEmi-$factura->secuencial.pdf";
     file_put_contents("$pdfName", $output);
-
-    header('Location: ' . $pdfName);
+    print_r($html);
+    //header('Location: ' . $pdfName);
     exit();
 } catch (Exception $e) {
 }
