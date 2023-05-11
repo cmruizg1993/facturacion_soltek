@@ -30,7 +30,7 @@ require('../settings/facturacion.php');
         // consumir endpoint de recepción        
         $idVenta = $id;//(int)$factura->secuencial;
         $respuesta = $api->autorizacion($factura['clave_acceso'], $pruebas);
-        print_r($respuesta);
+        //print_r($respuesta);
 
         if(isset($respuesta->RespuestaAutorizacionComprobante)){
             
