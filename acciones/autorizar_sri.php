@@ -55,6 +55,7 @@ require('../settings/facturacion.php');
                 $sql4 = "UPDATE fe_facturas SET estado_sri = '$estado', respuesta_sri =  '$mensaje', fecha_autorizacion = '$fechaAutorizacion', numero_autorizacion = '$nroAutorizacion', ambiente = '$ambiente' WHERE transaction_id = '$id';";
                 $r = $conex->query($sql4);
             }
+            echo $sql4;
         }
     
         //header('Location: ' . $_SERVER['HTTP_REFERER']);
