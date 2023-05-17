@@ -11,6 +11,14 @@ class Factura{
     public $telefono ;
     public $correo ;
 
+    public $emailCliente;
+    public $telefonoCliente;
+
+    /* autorizacion */
+    public $fechaAutorizacion;
+    public $numeroAutorizacion;
+    public $ambienteAutorizacion;
+
     /* info tributaria */
     public $ambiente;
     public $tipoEmision;
