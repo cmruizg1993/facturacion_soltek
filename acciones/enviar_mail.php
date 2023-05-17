@@ -10,7 +10,7 @@ require('../ride.php');
 
 //Create an instance; passing `true` enables exceptions
 $mail = new PHPMailer(true);
-
+$email = null;
 try {
     $id = isset($_GET["id"]) ? $_GET["id"]: null;
     
@@ -98,7 +98,12 @@ try {
         echo "Error al obtener el PDF";
     }
 } catch (MailerException $e) {
-    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+    if($email){
+        header('Location: ' . $_SERVER['HTTP_REFERER'].'?error=No se pudo enviar el mensaje a la dirección de correo: '.$email);
+    }else{
+        header('Location: ' . $_SERVER['HTTP_REFERER'].'?error=El email del destinatario no es válido.');
+    }    
+    exit();
 }
 
 ?>
