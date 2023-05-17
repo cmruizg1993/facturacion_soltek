@@ -92,7 +92,7 @@ try {
         $mail->send();
         $sql4 = "UPDATE fe_facturas SET estado_mail = '1' WHERE transaction_id = '$id';";
         $r = $conex->query($sql4);
-        header('Location: ' . $_SERVER['HTTP_REFERER']);
+        header('Location: /facturacion/main.php?ruta=AUTORIZADAS');
         exit();
     }else{
         echo "Error al obtener el PDF";
