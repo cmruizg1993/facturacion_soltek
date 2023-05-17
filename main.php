@@ -22,7 +22,7 @@ $ruta = isset($_GET['ruta']) ? $_GET['ruta']: '';
 $dropBusiness = isset($_REQUEST['dropBusiness']) ? $_REQUEST['dropBusiness'] : 0;
 $dropLocation = isset($_REQUEST['dropLocation']) ? $_REQUEST['dropLocation'] : 0;
 $filtro = isset($_REQUEST['filtro']) ? $_REQUEST['filtro'] : '';
-$error = isset($_REQUEST['error']) ? $_REQUEST['error'] : '';
+$error = isset($_GET['error']) ? $_GET['error'] : '';
 
 if($dropBusiness > 0){
     setcookie('dropBusiness', $dropBusiness);
@@ -172,7 +172,7 @@ if($dropLocation){
                 }elseif($ruta){
                     echo "<h4 class='text-primary'>FACTURAS $ruta</h4>";
                     if($error){
-                        echo '<div class="alert alert-danger mb-2 mt-2">'.$error.'</div>';    
+                        echo '<div class="alert alert-danger" role="alert">'.$error.'</div>';    
                     }
                     echo '<div class="table-responsive" style="max-height: 550px;">';
                     include './tabla_facturas.php';
