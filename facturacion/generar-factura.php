@@ -17,7 +17,7 @@ function generarFactura($id, Factura &$factura, $conex){
         $factura->tipoEmision = 1;
         $factura->codDoc = '01';
 
-        $sql = "SELECT t.id, invoice_no, t.created_at, final_total, total_before_tax, discount_amount, 
+        $sql = "SELECT t.id, invoice_no, t.transaction_date, final_total, total_before_tax, discount_amount, 
                     ruc, nombre, razon, obligado, establecimiento, punto_emision, direccion, p12_file_path, p12_password, testing, logo, telefono, correo,
                     c.name as cliente, c.contact_id as dni, c.address_line_1, c.address_line_2, c.city, c.email, c.mobile,
                     f.clave_acceso, f.fecha_autorizacion, f.numero_autorizacion, f.ambiente
@@ -59,7 +59,7 @@ function generarFactura($id, Factura &$factura, $conex){
         $factura->ambienteAutorizacion = $transaction['ambiente'] ? $transaction['ambiente']:null;
         /***************/
 
-        $factura->fechaEmision = new DateTime($transaction['created_at']) ;
+        $factura->fechaEmision = new DateTime($transaction['transaction_date']) ;
         $tipoDni = strlen($transaction["dni"]) == 13 ? '04':'05';
         $factura->tipoIdentificacionComprador = $tipoDni;
         $factura->identificacionComprador = $transaction['dni'];

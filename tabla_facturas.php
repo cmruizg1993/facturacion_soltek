@@ -25,7 +25,7 @@
                     if($business > 0 && $location > 0){
                         $sql2 = "";
                         if($tipoFacturas == "PENDIENTES"){
-                            $sql2 = "SELECT t.id, invoice_no, t.created_at, final_total, f.estado_sri, f.estado_mail, f.respuesta_sri, c.name as cliente, c.contact_id as dni FROM transactions t 
+                            $sql2 = "SELECT t.id, invoice_no, t.transaction_date, final_total, f.estado_sri, f.estado_mail, f.respuesta_sri, c.name as cliente, c.contact_id as dni FROM transactions t 
                                     LEFT JOIN contacts c ON c.id = t.contact_id 
                                     LEFT JOIN fe_facturas f ON t.id = f.transaction_id 
                                     WHERE t.business_id = $business AND t.location_id = $location AND f.id IS NULL AND t.type = 'sell' and t.status not LIKE ('draft') and invoice_no not LIKE ('TCK%')
@@ -33,7 +33,7 @@
                                     ORDER BY t.id DESC LIMIT 25";
                         }
                         if($tipoFacturas == "ENVIADAS"){
-                            $sql2 = "SELECT t.id, invoice_no, t.created_at, final_total, f.estado_sri, f.estado_mail, f.respuesta_sri, c.name as cliente, c.contact_id as dni FROM transactions t 
+                            $sql2 = "SELECT t.id, invoice_no, t.transaction_date, final_total, f.estado_sri, f.estado_mail, f.respuesta_sri, c.name as cliente, c.contact_id as dni FROM transactions t 
                                     LEFT JOIN contacts c ON c.id = t.contact_id 
                                     LEFT JOIN fe_facturas f ON t.id = f.transaction_id 
                                     WHERE t.business_id = $business AND t.location_id = $location AND f.estado_sri = 'RECIBIDA' 
@@ -41,7 +41,7 @@
                                     ORDER BY t.id DESC LIMIT 25";
                         }
                         if($tipoFacturas == "AUTORIZADAS"){
-                            $sql2 = "SELECT t.id, invoice_no, t.created_at, final_total, f.estado_sri, f.estado_mail, f.respuesta_sri, c.name as cliente, c.contact_id as dni FROM transactions t 
+                            $sql2 = "SELECT t.id, invoice_no, t.transaction_date, final_total, f.estado_sri, f.estado_mail, f.respuesta_sri, c.name as cliente, c.contact_id as dni FROM transactions t 
                                     LEFT JOIN contacts c ON c.id = t.contact_id 
                                     LEFT JOIN fe_facturas f ON t.id = f.transaction_id 
                                     WHERE t.business_id = $business AND t.location_id = $location AND f.estado_sri = 'AUTORIZADO' 
@@ -49,7 +49,7 @@
                                     ORDER BY t.id DESC LIMIT 25";
                         }
                         if($tipoFacturas == "RECHAZADAS"){
-                            $sql2 = "SELECT t.id, invoice_no, t.created_at, final_total, f.estado_sri, f.estado_mail, f.respuesta_sri, c.name as cliente, c.contact_id as dni FROM transactions t 
+                            $sql2 = "SELECT t.id, invoice_no, t.transaction_date, final_total, f.estado_sri, f.estado_mail, f.respuesta_sri, c.name as cliente, c.contact_id as dni FROM transactions t 
                                     LEFT JOIN contacts c ON c.id = t.contact_id 
                                     LEFT JOIN fe_facturas f ON t.id = f.transaction_id 
                                     WHERE t.business_id = $business AND t.location_id = $location AND f.estado_sri != 'RECIBIDA' AND f.estado_sri != 'AUTORIZADO' 
@@ -61,7 +61,7 @@
                         while($fila2 = $resultado2->fetch_array()){
                             $id = $fila2['id'];
                             $secuencial = $fila2['invoice_no'];
-                            $fecha = ($fila2['created_at']);
+                            $fecha = ($fila2['transaction_date']);
                             $total = $fila2['final_total'];
                             $estado = $fila2['estado_sri'];
                             $respuesta = $fila2['respuesta_sri'];
