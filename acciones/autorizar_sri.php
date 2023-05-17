@@ -42,7 +42,7 @@ require('../settings/facturacion.php');
             if($autorizacion){
                 $estado = isset($autorizacion->estado) ? $autorizacion->estado: '';
                 $nroAutorizacion = isset($autorizacion->numeroAutorizacion) ? $autorizacion->numeroAutorizacion: '';
-                $fechaAutorizacion = isset($autorizacion->fechaAutorizacion) ? $autorizacion->fechaAutorizacion: '';
+                $fechaAutorizacion = isset($autorizacion->fechaAutorizacion) ? (new DateTime($autorizacion->fechaAutorizacion))->format('Y-m-d'): '';
                 $ambiente = isset($autorizacion->ambiente) ? $autorizacion->ambiente: '';
             }
             $successState = 'AUTORIZADO';
