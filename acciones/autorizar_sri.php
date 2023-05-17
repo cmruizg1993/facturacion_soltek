@@ -58,8 +58,8 @@ require('../settings/facturacion.php');
             echo $sql4;
         }
     
-        //header('Location: ' . $_SERVER['HTTP_REFERER']);
-        //exit();
+        header('Location: ' . $_SERVER['HTTP_REFERER']);
+        exit();
 
     }catch(Exception $ex){
         var_dump($ex);
