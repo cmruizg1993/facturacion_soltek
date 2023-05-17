@@ -56,7 +56,7 @@
                                     AND ( c.contact_id LIKE '%$filtro%' OR c.name LIKE '%$filtro%' OR invoice_no LIKE '%$filtro%')
                                     ORDER BY t.id DESC LIMIT 25";
                         }
-                        
+                        //echo $sql2;
                         $resultado2=$conex->query($sql2);
                         while($fila2 = $resultado2->fetch_array()){
                             $id = $fila2['id'];

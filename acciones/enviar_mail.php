@@ -99,9 +99,9 @@ try {
     }
 } catch (MailerException $e) {
     if($email){
-        header('Location: ' . $_SERVER['HTTP_REFERER'].'?error=No se pudo enviar el mensaje a la dirección de correo: '.$email);
+        header('Location: ' . $_SERVER['HTTP_REFERER'].'&error=No se pudo enviar el mensaje a la dirección de correo: '.$email.'Mailer Error: '.$mail->ErrorInfo);
     }else{
-        header('Location: ' . $_SERVER['HTTP_REFERER'].'?error=El email del destinatario no es válido.');
+        header('Location: ' . $_SERVER['HTTP_REFERER'].'&error=El email del destinatario no es válido.');
     }    
     exit();
 }
