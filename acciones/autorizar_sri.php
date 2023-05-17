@@ -30,7 +30,7 @@ require('../settings/facturacion.php');
         // consumir endpoint de recepción        
         $idVenta = $id;//(int)$factura->secuencial;
         $respuesta = $api->autorizacion($factura['clave_acceso'], $pruebas);
-        print_r($respuesta);
+        //print_r($respuesta);
 
         if(isset($respuesta->RespuestaAutorizacionComprobante)){
             
@@ -55,7 +55,7 @@ require('../settings/facturacion.php');
                 $sql4 = "UPDATE fe_facturas SET estado_sri = '$estado', respuesta_sri =  '$mensaje', fecha_autorizacion = '$fechaAutorizacion', numero_autorizacion = '$nroAutorizacion', ambiente = '$ambiente' WHERE transaction_id = '$id';";
                 $r = $conex->query($sql4);
             }
-            echo $sql4;
+            //echo $sql4;
         }
     
         header('Location: ' . $_SERVER['HTTP_REFERER']);
