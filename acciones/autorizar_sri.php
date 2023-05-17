@@ -48,11 +48,11 @@ require('../settings/facturacion.php');
             $successState = 'AUTORIZADO';
             $successAuth = $successState == $successState;
             //if(!$successAuth) $estado = 'NO '.$successState;
-
-            $sql4 = "INSERT INTO fe_facturas (estado_sri, transaction_id, respuesta_sri) VALUES ('$estado', '$id', '$mensaje');";
+            //ALTER TABLE `fe_facturas` ADD `fecha_autorizacion` DATETIME NULL AFTER `clave_acceso`, ADD `numero_autorizacion` VARCHAR(100) NULL AFTER `fecha_autorizacion`;
+            $sql4 = "INSERT INTO fe_facturas (estado_sri, transaction_id, respuesta_sri, fecha_autorizacion, numero_autorizacion, ambiente) VALUES ('$estado', '$id', '$mensaje', '$fechaAutorizacion', '$nroAutorizacion', $ambiente);";
             $r = $conex->query($sql4);
             if($r === false){   
-                $sql4 = "UPDATE fe_facturas SET estado_sri = '$estado', respuesta_sri =  '$mensaje' WHERE transaction_id = '$id';";
+                $sql4 = "UPDATE fe_facturas SET estado_sri = '$estado', respuesta_sri =  '$mensaje', fecha_autorizacion = '$fechaAutorizacion', numero_autorizacion = '$nroAutorizacion', ambiente = '$ambiente' WHERE transaction_id = '$id';";
                 $r = $conex->query($sql4);
             }
         }

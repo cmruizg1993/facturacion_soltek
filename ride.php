@@ -39,9 +39,9 @@ try {
     $base64 =  base64_encode($data);
     $factura->logo = $base64;
     $factura->claveAcceso = $transaction['clave_acceso'];
-    
+    echo $factura->fechaEmision->format('Y-m-d H:i:s');
     $generator = new BarcodeGeneratorPNG();
-    $codigoBarras = base64_encode($generator->getBarcode($factura->claveAcceso, $generator::TYPE_CODE_128));
+    $codigoBarras = base64_encode($generator->getBarcode($factura->claveAcceso ? $factura->claveAcceso: '00000000000000000000000000000000000000000000000000', $generator::TYPE_CODE_128));
 
 
     $html = $twig->render('ride.html', [

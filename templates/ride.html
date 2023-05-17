@@ -108,16 +108,16 @@
               </div>
               <div>
                 <span>FECHA AUTORIZACION:</span
-                ><span>{{factura.fecha|date('d/m/Y h:i:s')}}</span>
+                ><span>{{factura.fechaAutorizacion|date('d/m/Y h:i:s')}}</span>
               </div>
-              <div><span>AMBIENTE:</span><span>PRODUCCION</span></div>
+              <div><span>AMBIENTE:</span><span>{{factura.ambienteAutorizacion}}</span></div>
               <div><span>EMISION:</span><span>NORMAL</span></div>
               <div class="centered">
                 <b>NUMERO DE AUTORIZACION</b>
               </div>
             </div>
             <div class="centered">
-              <span class="clave">{{factura.claveAcceso}}</span>
+              <span class="clave">{{factura.numeroAutorizacion}}</span>
             </div>
             <div class="centered">
               <b>CLAVE DE ACCESO</b>
@@ -141,6 +141,8 @@
         </div>
         <div class="p10" style="display: block; width: 100%">
           <span>Dirección:</span><span>{{factura.direccionComprador}}</span>
+          <span style="margin-left: 20px">Email:</span
+            ><span>{{factura.emailCliente}}</span>
         </div>
         <div class="p10" style="display: block; width: 100%">
           <span>CI/RUC:</span><span>{{factura.identificacionComprador}}</span>
@@ -149,7 +151,7 @@
           <span style="margin-left: 20px">Vence:</span
           ><span>{{factura.fecha | date('d/m/Y')}}</span>
           <span style="margin-left: 20px">Teléfono:</span
-          ><span>{{factura.cliente.telefono}}</span>
+          ><span>{{factura.telefonoCliente}}</span>
         </div>
       </div>
       <div class="table">

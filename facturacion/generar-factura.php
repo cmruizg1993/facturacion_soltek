@@ -19,8 +19,8 @@ function generarFactura($id, Factura &$factura, $conex){
 
         $sql = "SELECT t.id, invoice_no, t.created_at, final_total, total_before_tax, discount_amount, 
                     ruc, nombre, razon, obligado, establecimiento, punto_emision, direccion, p12_file_path, p12_password, testing, logo, telefono, correo,
-                    c.name as cliente, c.contact_id as dni, c.address_line_1, c.address_line_2,
-                    f.clave_acceso
+                    c.name as cliente, c.contact_id as dni, c.address_line_1, c.address_line_2, c.city, c.email, c.mobile,
+                    f.clave_acceso, f.fecha_autorizacion, f.numero_autorizacion, f.ambiente
                     FROM transactions t 
                     INNER JOIN fe_empresa e ON t.business_id = e.business_id AND t.location_id = e.location_id
                     INNER JOIN contacts c ON c.id = t.contact_id 
@@ -48,15 +48,23 @@ function generarFactura($id, Factura &$factura, $conex){
         $factura->telefono = $transaction['telefono'];
         $factura->correo = $transaction['correo'];
 
+        $factura->emailCliente = $transaction['email'];
+        $factura->telefonoCliente = $transaction['mobile'];
         
         $factura->setSecuencial($transaction['invoice_no']);//verificar
+
+        /* autorizacion */
+        $factura->fechaAutorizacion = $transaction['fecha_autorizacion'] ? $transaction['fecha_autorizacion']:null;
+        $factura->numeroAutorizacion = $transaction['numero_autorizacion'] ? $transaction['numero_autorizacion']:null;
+        $factura->ambienteAutorizacion = $transaction['ambiente'] ? $transaction['ambiente']:null;
+        /***************/
 
         $factura->fechaEmision = new DateTime($transaction['created_at']) ;
         $tipoDni = strlen($transaction["dni"]) == 13 ? '04':'05';
         $factura->tipoIdentificacionComprador = $tipoDni;
         $factura->identificacionComprador = $transaction['dni'];
         $factura->razonSocialComprador = $transaction['cliente'];
-        $direccion = $transaction["address_line_1"].', '.$transaction["address_line_2"];
+        $direccion = $transaction["address_line_1"].', '.$transaction["address_line_2"] .' - '. $transaction['city'];
         $factura->direccionComprador = $direccion;
 
 
